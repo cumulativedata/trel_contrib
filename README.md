@@ -21,4 +21,4 @@ Here you will find a number of jobs, sensors and their registrations that you ca
 | [append_day](job_examples/bigquery/append_day) | bigquery, demo | Yes | A bigquery code part of the Trel demo |
 | [report_summary](job_examples/bigquery/report_summary) | bigquery, demo | Yes | A bigquery code part of the Trel demo |
 | [s3_python](lifecycle/s3_python) | lifecycle | Yes | This job will perform lifecycle on S3 type repositories |
-| [gcp] (lifecycle/gcp) | lifecycle | Yes | This job will perform lifecycle on Google Storage and BigQuery repositories |
+| [gcp](lifecycle/gcp) | lifecycle | Yes | This job will perform lifecycle on Google Storage and BigQuery repositories |
