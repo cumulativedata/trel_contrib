@@ -3,7 +3,7 @@ sensor_id: # specify
 sensor.source_code.main:
   class: github
   branch: main
-  path: https://github.com/GauthamAnil/trel_contrib.git
+  path: https://github.com/cumulativedata/trel_contrib.git
 sensor.main_executable: _code/sensors/bigquery_table/sensor_bigquery_table.py
 
 manager_name: main

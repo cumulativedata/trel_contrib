@@ -6,7 +6,7 @@ execution.profile: bigquery
 execution.source_code.main:
   class: github
   branch: master
-  path: git@github.com:GauthamAnil/trel_contrib.git
+  path: git@github.com:cumulativedata/trel_contrib.git
 
 repository_map:
   - transactions: bq-us

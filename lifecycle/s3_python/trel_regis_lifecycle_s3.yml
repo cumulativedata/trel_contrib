@@ -5,7 +5,7 @@ execution.profile: python # or emr_pyspark or dataproc_pyspark
 execution.source_code.main:
   class: github
   branch: main
-  path: git@github.com:GauthamAnil/trel_contrib.git
+  path: git@github.com:cumulativedata/trel_contrib.git
 execution.main_executable: _code/lifecycle/s3_python/s3.py
 
 repository_map:
