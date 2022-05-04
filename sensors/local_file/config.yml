@@ -2,7 +2,7 @@ sensor_id: local_file_demo
 sensor.source_code.main:
   class: github
   branch: master
-  path: git@github.com:GauthamAnil/trel_contrib.git
+  path: git@github.com:cumulativedata/trel_contrib.git
 sensor.main_executable: _code/sensors/local_file/sensor_local_file.py
 checked_out_files_to_use: []
 manager_name: main
