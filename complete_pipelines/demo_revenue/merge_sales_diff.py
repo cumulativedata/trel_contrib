@@ -46,6 +46,6 @@ combined as (select * from sales UNION ALL select * from sales_diff)
 
 select * from res
     """).repartition(4)\
-         .write.parquet(cli_args.output)
+         .write.json(cli_args.output)
 
     sc.stop()

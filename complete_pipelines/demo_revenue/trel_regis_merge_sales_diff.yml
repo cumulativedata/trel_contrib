@@ -1,0 +1,36 @@
+name: merge_sales_diff
+
+execution.profile: emr_pyspark
+
+sensor.source_code.main:
+  class: github
+  branch: main
+  path: https://github.com/cumulativedata/trel_contrib.git
+sensor.main_executable: _code/complete_pipelines/demo_revenue/merge_sales_diff.py
+
+repository_map:
+  - sales: s3-us-east2
+    sales_diff: s3-us-east2
+
+execution.output_generator:
+  class: default
+  outputs:
+  - dataset_class: sales
+    name: output
+
+resource.name: EMRMapReduceResource
+resource.memory_level: normal
+resource.num_cores: 1
+resource.args:
+  region: us-east-2
+  spot: true
+
+scheduler:
+  class: periodic
+  labels: [ master ]
+  self_depends_on: [ sales ]
+  depends_on: [ sales_diff ]
+  instance_ts_precisions: [ D ]
+  cron_constraint: "0 0 * * *"
+  schedule_ts_min: "2022-01-01 00:00:00"
+
