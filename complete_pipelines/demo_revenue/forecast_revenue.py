@@ -25,7 +25,7 @@ if __name__ == '__main__':
     with open(args_fname) as f:
         args = yaml.load(f)
         print(args)
-    s3_temp = args['temp_paths']['s3'] + str(time.time()) + '/'
+    # s3_temp = args['temp_paths']['s3'] + str(time.time()) + '/'
 
     sc = SparkContext(conf=SparkConf())
     spark = SQLContext(sc)

@@ -2,11 +2,11 @@ name: merge_sales_diff
 
 execution.profile: emr_pyspark
 
-sensor.source_code.main:
+execution.source_code.main:
   class: github
   branch: main
   path: https://github.com/cumulativedata/trel_contrib.git
-sensor.main_executable: _code/complete_pipelines/demo_revenue/merge_sales_diff.py
+execution.main_executable: _code/complete_pipelines/demo_revenue/merge_sales_diff.py
 
 repository_map:
   - sales: s3-us-east2
@@ -18,7 +18,7 @@ execution.output_generator:
   - dataset_class: sales
     name: output
 
-resource.name: EMRMapReduceResource
+resource.name: emr_spark
 resource.memory_level: normal
 resource.num_cores: 1
 resource.args:
