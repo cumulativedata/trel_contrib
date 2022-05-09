@@ -123,6 +123,7 @@ class ODBCSensor(treldev.Sensor):
         sql = ("select * from %(table)s"
                if self.custom_sql is None
                else self.custom_sql)
+        print("SQL", sql)
         cursor.execute(sql, {'table':self.table,
                              'instance_ts':minute,
                              'instance_ts_precision':self.instance_ts_precision})
