@@ -120,15 +120,16 @@ class ODBCSensor(treldev.Sensor):
         destination.prepare()
             
         fetch_rows = self.batch_rows // 20
-        sql = ("select * from %(table)s"
+        sql = (f"select * from {self.table}"
                if self.custom_sql is None
                else self.custom_sql)
-        print("SQL", sql, file=sys.stderr)
-        cursor.execute(sql, {'table':self.table,
-                             'instance_ts':minute,
-                             'instance_ts_precision':self.instance_ts_precision})
+        args = {'table': self.table,
+                'instance_ts':minute,
+                'instance_ts_precision':self.instance_ts_precision}
+        print("SQL", sql.format(**args), file=sys.stderr)
+        cursor.execute(sql.format(**args))
 
-        print(f"Executed SQL:\n{cursor._executed}", file=sys.stderr)
+        #print(f"Executed SQL:\n{cursor._last_executed}", file=sys.stderr)
         done = False
         while not done:
             with tempfile.NamedTemporaryFile('w+', delete=False) as f:
