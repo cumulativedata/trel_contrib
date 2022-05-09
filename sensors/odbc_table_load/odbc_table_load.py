@@ -126,7 +126,7 @@ class ODBCSensor(treldev.Sensor):
         cursor.execute(sql, {'table':self.table,
                              'instance_ts':minute,
                              'instance_ts_precision':self.instance_ts_precision})
-)
+
         print(f"Executed SQL:\n{cursor._executed}", file=sys.stderr)
         done = False
         while not done:
