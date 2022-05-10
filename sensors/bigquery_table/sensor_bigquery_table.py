@@ -68,7 +68,7 @@ class BigQueryTableSensor(treldev.Sensor):
                            'alt_uri':f'bq://{self.bq_project}/{self.bq_dataset}/{table}'
             }
 
-    def save_data_to_path(self, load_info, uri):
+    def save_data_to_path(self, load_info, uri, **kwargs):
         ''' Nothing to do, as this sensor only registers. '''
         pass
         

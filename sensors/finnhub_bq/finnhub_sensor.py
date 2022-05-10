@@ -80,9 +80,9 @@ class FinnhubSensor(treldev.Sensor):
         ''' If there is data ready to be inserted, this should return a datasetspec. Else, return None '''
         return self.get_new_datasetspecs_with_cron_and_precision(datasets)
 
-    def save_data_to_path(self, load_info, uri):
+    def save_data_to_path(self, load_info, uri, **kwargs):
         ''' if the previous call to get_new_datasetspecs returned a (load_info, datasetspec) tuple, then this call should save the data to the provided path, given the corresponding (load_info, path). '''
-        ts = load_info
+        ts = load_info['instance_ts']
         ts_next = croniter.croniter(self.cron_constraint, ts).get_next(datetime.datetime)
         if self.debug:
             self.logger.debug(f"ts {ts} ts_next {ts_next}")

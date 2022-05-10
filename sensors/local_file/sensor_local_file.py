@@ -47,7 +47,7 @@ class LocalFileSensor(treldev.Sensor):
                               'instance_ts_precision':self.instance_ts_precision,
                               'locking_seconds': self.locking_seconds }
 
-    def save_data_to_path(self, load_info, uri):
+    def save_data_to_path(self, load_info, uri, **kwargs):
         ''' if the previous call to get_new_datasetspecs returned a (load_info, datasetspec) tuple, then this call should save the data to the provided path, given the corresponding (load_info, path). '''
         filename = load_info
         print(f"Uploading {filename} to {uri}",file=sys.stderr)
