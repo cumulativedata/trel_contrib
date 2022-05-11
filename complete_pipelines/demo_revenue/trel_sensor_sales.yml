@@ -12,7 +12,7 @@ credentials.requested_name: default
 dataset_class: sales # specify
 instance_prefix: null # it is recommended you specify a value here, even when null.
 instance_ts_precision: D # change based on frequency of drop
-label: qa6
+label: master
 repository: s3-us-east2 # specify destination repository
 
 # See schema management for details. As for now, this is only used as the attribute
