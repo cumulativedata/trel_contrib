@@ -1,4 +1,4 @@
-name: s3_to_athena.sales_diff
+name: s3_to_athena.sales_stats
 job_description: "Appends transactions to 30-day data."
 
 execution.profile: python
@@ -24,5 +24,5 @@ execution.output_generator:
   class: default
   outputs:
   - link_to_input_with_dataset_class: sales_stats
-    repository: athena-ue2
-
+    repository: athena-e2
+    alt_uri: "athena://us-east-2/AwsDataCatalog/tmp/sales_stats"
