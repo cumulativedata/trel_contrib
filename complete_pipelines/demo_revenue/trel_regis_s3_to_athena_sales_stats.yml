@@ -5,7 +5,7 @@ execution.profile: python
 
 execution.source_code.main:
   class: github
-  branch: demo_revenue
+  branch: main
   path: git@github.com:cumulativedata/trel_contrib.git
 execution.main_executable: _code/copy_jobs/s3_to_athena/s3_to_athena.py
 

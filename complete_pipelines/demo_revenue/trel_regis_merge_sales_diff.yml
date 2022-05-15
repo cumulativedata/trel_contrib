@@ -4,7 +4,7 @@ execution.profile: emr_pyspark
 
 execution.source_code.main:
   class: github
-  branch: demo_revenue
+  branch: main
   path: https://github.com/cumulativedata/trel_contrib.git
 execution.main_executable: _code/complete_pipelines/demo_revenue/merge_sales_diff.py
 
