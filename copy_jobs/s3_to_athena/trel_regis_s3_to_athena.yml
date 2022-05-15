@@ -1,0 +1,28 @@
+name: #
+job_description: "Appends transactions to 30-day data."
+
+execution.profile: python
+
+execution.source_code.main:
+  class: github
+  branch: demo_revenue
+  path: git@github.com:cumulativedata/trel_contrib.git
+execution.main_executable: _code/copy_jobs/s3_to_athena/s3_to_athena.py
+
+repository_map:
+  - <input_dataset_class> : <s3 repository>
+
+scheduler:
+  class: single_instance
+  depends_on: [ <input_dataset_class> ]
+  labels: [ master ]
+  instance_ts_precisions: [ D ]
+  cron_constraint: "0 0 * * *"
+  schedule_ts_min: "2021-01-01 00:00:00"
+
+execution.output_generator:
+  class: default
+  outputs:
+  - link_to_input_with_dataset_class: <input_dataset_class>
+    repository: <athena repository>
+

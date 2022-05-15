@@ -1,0 +1,28 @@
+name: s3_to_athena.sales_stats
+job_description: "Appends transactions to 30-day data."
+
+execution.profile: python
+
+execution.source_code.main:
+  class: github
+  branch: demo_revenue
+  path: git@github.com:cumulativedata/trel_contrib.git
+execution.main_executable: _code/copy_jobs/s3_to_athena/s3_to_athena.py
+
+repository_map:
+  - sales_stats : s3-us-east2
+
+scheduler:
+  class: single_instance
+  depends_on: [ sales_stats ]
+  labels: [ master ]
+  instance_ts_precisions: [ D ]
+  cron_constraint: "0 0 * * *"
+  schedule_ts_min: "2021-01-01 00:00:00"
+
+execution.output_generator:
+  class: default
+  outputs:
+  - link_to_input_with_dataset_class: sales_stats
+    repository: athena-e2
+    alt_uri: "athena://us-east-2/AwsDataCatalog/tmp/sales_stats"
