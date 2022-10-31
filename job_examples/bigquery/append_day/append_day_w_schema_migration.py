@@ -14,10 +14,10 @@ if __name__ == '__main__':
     t30_schema = args['inputs']['transactions_30day'][0]['schema_version']
     output_schema = args['outputs']['transactions_30day'][0]['schema_version']
 
-    if (t30_schema, t_schema, output_schema) in [(1,1,1),(2,2,2)]:
+    if (t30_schema, t_schema, output_schema) in [('1','1','1'),('2','2','2')]:
         t_cols = "*"
         t30_cols = "*"
-    elif (t30_schema, t_schema, output_schema) in [(1,2,2)]:
+    elif (t30_schema, t_schema, output_schema) in [('1','2','2')]:
         t_cols = "*"
         t30_cols = "ts, user_id, product_id, amount, 0 as is_returned"
     else:
