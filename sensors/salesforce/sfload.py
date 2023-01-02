@@ -16,7 +16,7 @@ Supported repository classes as destination:
 '''
 
 import argparse, os, sys
-import treldev, tempfile, json, datetime, subprocess
+import treldev, tempfile, json, datetime, subprocess, traceback
 from os import listdir
 from os.path import isfile, join, isdir
 import sflib
@@ -60,17 +60,17 @@ class SalesforceSensor(treldev.ClockBasedSensor):
     def save_data_to_path(self, load_info, uri, dataset=None, **kwargs):
         sf = sflib.instantiate_from_creds(self.credentials_str)
         table_name = load_info['table_name']
-        print("processing table", load_info['table_name'])
+        print("processing table", load_info['table_name'], file=sys.stderr)
         non_queryable = False
         failed = False
         try:
             sflib.load_table(sf, table_name, uri, self,
                              cols=self.table_details.get(table_name,{}).get('columns'))
         except TableNotQueryableException as ex:
-            print(ex)
+            print(ex, file=sys.stderr)
             non_queryable = True
         except Exception as ex:
-            print(ex)
+            traceback.print_exc()
             failed = True
         sf.session.close()
         if failed and table_name in self.mandatory_load_tables:

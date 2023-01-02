@@ -75,7 +75,6 @@ def load_table(sf, table_name, uri, sensor, cols=None):
     if not table_data['queryable']:
         raise TableNotQueryableException(f"Specified table {table_name} is not queryable.")
     table_cols = dict(extract_table_columns(table_data))
-    print(table_cols)
     if cols is not None:
         if len(set(cols).difference(table_cols)) > 0:
             raise Exception(f"The columns {set(cols).difference(table_cols)} that you requested do not existing in table {table_name}")
