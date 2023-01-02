@@ -35,7 +35,7 @@ class SalesforceSensor(treldev.ClockBasedSensor):
         self.table_whitelist = self.config.get('table_whitelist',None)
         self.table_blacklist = self.config.get('table_blacklist',None)
         self.ignore_recommended_excluded_tables = self.config.get('ignore_recommended_excluded_tables', False)
-        self.table_details = self.config.get('table_details',[])
+        self.table_details = self.config.get('table_details',{})
         self.batch_rows = self.config.get('batch_rows',100000)
         self.known_contents = set([])
         self.cron_constraint = self.config['cron_constraint']
