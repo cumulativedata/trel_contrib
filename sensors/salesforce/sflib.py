@@ -5,7 +5,7 @@ try:
 except: 
     pass # for unit tests. They will import destinations another way.
 
-import unittest, yaml, json, os, os.path, tempfile
+import unittest, yaml, json, os, os.path, tempfile, sys
 
 column_type_map = {
     'bq': yaml.safe_load('''
