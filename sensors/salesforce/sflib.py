@@ -1,5 +1,9 @@
 from simple_salesforce import Salesforce, SFType
 from simple_salesforce.format import format_soql
+try:
+    import destinations
+except: 
+    pass # for unit tests. They will import destinations another way.
 
 import unittest, yaml, json, os, os.path, tempfile
 
