@@ -1,79 +1,17 @@
 #!/usr/bin/env python3
 
 '''
-This sensor loads from ODBC data sources. See the config.yml file below for possible options.
+This sensor loads from Salesforce. See the config.yml file below for possible options.
 
-.. literalinclude:: ../../GIT/trel_contrib/sensors/odbc_table_load/config.yml
+.. literalinclude:: ../../GIT/trel_contrib/sensors/salesforce/config.yml
    :language: yaml
 
 
 The behavior is as follows:
 
-1. The sensor queries the relevant datasets are already exist in the catalog. It uses the following parameters for this:
-
- * dataset_class
- * instance_ts_precision
- * label
- * repository
- * instance_prefix
- * max_instance_age_seconds
-    
-2. The sensor looks at the clock and identifies which datasets are relevant to load. The parameters of relevance are,
-
- * cron_constraint
- * delay_seconds
- * max_instance_age_seconds
- * backfill_newest_first (true / false)
-
- Here, treat the ``cron_constraint`` as a set rather than a timer. It consists of a set of timestamps. The ``cron_constraint`` defines the periods. Each period starts at a timestamp in the ``cron_constraint`` and ends before the next one. 
-
-This sensor will try to create a dataset for each period. The resulting dataset's ``instance_ts`` will match the period start.
- 
- A period is considered ready to load ``delay_seconds`` after the end of the period. Sensor will not try to load a period whose start is older than ``max_instance_age_seconds`` from now.
-
-3. Once a dataset that should be created is identified, a connection is established to the ODBC data source
-
- * driver
- * server
- * port
- * username
- * password
- * credentials.requested_name
- * credentials.source_key -> odbc.<server_name>
-
-4. Then the relevant data is downloaded in pieces and uploaded to the destination
-
- * database
- * table
- * custom_sql
- * repository
- * credentials.requested_name
-
-.. admonition:: Warning
-    :class: warning
-
-    When using ``custom_sql`` is used, make sure that for tabular destinations such as BigQuery, the result has the same schema as the table. 
-
-    This restriction does not apply to object store destinations such as S3 and Google Storage.
-
-Custom SQL
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-``custom_sql`` that is provided will be formatted using python's ``.format`` rather than ODBC's SQL parameterization. This is largely for convenience and readability. The rationale for not worrying about SQL injestion is that the SQL is provided by the developer and parameterized by Trel using strings not selectable by anyone. 
-
-Only three parameters are possible:
-
-1. ``table``: This is the table selected by the developer in this config.
-2. ``instance_ts``: This corresponds to the dataset and is a datetime object
-3. ``instance_ts_precision``: This takes one of 4 values: 'D', 'H', 'M' and 'S'.
-4. ``period_end``: This is the end of this period. The period starts at ``instance_ts``.
-
-Please take a look at :ref:`odbc_data_sources` for a list of pre-installed ODBC drivers in the Trel instance for the ``driver`` parameter.
-
 Supported repository classes as destination:
 
-1. ``s3``
-2. ``bigquery``
+1. ``bigquery``
 
 '''
 
@@ -138,3 +76,6 @@ class SalesforceSensor(treldev.ClockBasedSensor):
         if failed and table_name in self.mandatory_load_tables:
             raise Exception(f"The following mandatory table failed to load: {table_name}")
         
+if __name__ == '__main__':
+    treldev.Sensor.init_and_run(SalesforceSensor)
+    

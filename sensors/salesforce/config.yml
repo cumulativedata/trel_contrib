@@ -1,11 +1,13 @@
-sensor_id: # specify
+sensor_id: salesforce # specify
 
 sensor.source_code.main:
   class: github
   branch: salesforce
   path: https://github.com/cumulativedata/trel_contrib.git
 sensor.main_executable: _code/sensors/salesforce/sfload.py
-
+checked_out_files_to_use:
+  - _code/sensors/salesforce/sflib.py
+  - _code/sensors/destinations
 manager_name: main
 credentials.requested_name: default
 
@@ -15,6 +17,11 @@ instance_prefix: null # it is recommended you specify a value here, even when nu
 instance_ts_precision: D # change based on frequency of drop
 label: master
 repository: bq_us # specify destination repository
+
+table_whitelist:
+  - User
+  - Account
+  - Lead
 
 # See schema management for details. As for now, this is only used as the attribute
 # for the destination dataset and does not influence the schema of the destination.
@@ -36,4 +43,4 @@ delay_seconds: 30
 # intance_ts older than this many seconds.
 max_instance_age_seconds: 864000 
 
-debug: [ ] # to debug the sensor add strings "writes" and "reads" into this list
+debug: [ "writes", "reads" ] # to debug the sensor add strings "writes" and "reads" into this list
