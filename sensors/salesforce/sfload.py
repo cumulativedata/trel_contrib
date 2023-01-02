@@ -47,11 +47,11 @@ class SalesforceSensor(treldev.ClockBasedSensor):
         sf = sflib.instantiate_from_creds(self.credentials_str)
         total_tables = set(sflib.get_tables(sf))
         if self.table_whitelist is not None:
-            total_tables = sorted(total_tables.intersection(self.table_whitelist))
+            total_tables = total_tables.intersection(self.table_whitelist)
         if self.table_blacklist is not None:
-            total_tables = sorted(total_tables.difference(self.table_blacklist))
+            total_tables = total_tables.difference(self.table_blacklist)
         if not self.ignore_recommended_excluded_tables:
-            total_tables = sorted(total_tables.difference(sflib.recommended_excluded_tables))
+            total_tables = total_tables.difference(sflib.recommended_excluded_tables)
         for i,table_name in enumerate(sorted(total_tables)):
             load_info_copy = load_info.copy()
             load_info_copy['table_name'] = table_name
