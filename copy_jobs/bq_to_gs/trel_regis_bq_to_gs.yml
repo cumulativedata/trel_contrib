@@ -1,0 +1,27 @@
+name: <> #
+job_description: "Requests Google to export a BigQuery table to Google Storage"
+
+execution.profile: python
+
+execution.source_code.main:
+  class: github
+  branch: main
+  path: git@github.com:cumulativedata/trel_contrib.git
+execution.main_executable: _code/copy_jobs/bq_to_gs/bq_to_gs.py
+
+repository_map:
+  - <input_dataset_class> : <bq repository>
+
+scheduler:
+  class: single_instance
+  depends_on: [ <input_dataset_class> ]
+  labels: [ master ]
+  instance_ts_precisions: [ D ]
+  cron_constraint: "0 0 * * *"
+  schedule_ts_min: "2021-01-01 00:00:00"
+
+execution.output_generator:
+  class: default
+  outputs:
+  - repository: <gs repository>
+
