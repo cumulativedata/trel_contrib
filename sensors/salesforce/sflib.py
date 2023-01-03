@@ -42,7 +42,12 @@ def instantiate_from_creds(creds):
     return Salesforce(username=sfcreds['username'],
                       password=sfcreds['password'],
                       security_token=sfcreds['security_token'])
-    
+
+def instantiate_from_credentials_file(key='salesforce'):
+    with open('credentials.yml') as f:
+        creds = yaml.load(f)
+        return instantiate_from_creds(creds[key])
+
 def get_tables(sf):
     load_describe(sf)
     return [x['name'] for x in sf._trel_describe["sobjects"]]
