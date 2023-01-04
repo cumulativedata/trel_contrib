@@ -10,6 +10,9 @@ execution.source_code.main:
   branch: main
   path: git@github.com:cumulativedata/trel_contrib.git
 execution.main_executable: _code/export_jobs/salesforce/gs_to_salesforce.py
+execution.checked_out_files_to_use:
+  - _code/sensors/salesforce/sflib.py
+execution.additional_arguments: [ '--target_table=Lead' ]
 
 repository_map:
   - <input_dataset_class> : <gs repository>

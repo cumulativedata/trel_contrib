@@ -4,7 +4,6 @@ import sflib
 
 if __name__ == '__main__':
     args = treldev.get_args()
-    print(args)
     #treldev.SQLExecutor.set_args(args)
     sf = sflib.instantiate_from_credentials_file()
     
