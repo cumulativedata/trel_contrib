@@ -45,7 +45,7 @@ def instantiate_from_creds(creds):
 
 def instantiate_from_credentials_file(key='salesforce'):
     with open('credentials.yml') as f:
-        creds = yaml.load(f)
+        creds = yaml.safe_load(f)
         return instantiate_from_creds(creds[key])
 
 def get_tables(sf):
