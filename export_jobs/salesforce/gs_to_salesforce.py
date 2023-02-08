@@ -1,3 +1,13 @@
+#!/usr/bin/env python3
+''' A Trel job script that can push data from Google Storage to Salesforce. See sample registration file.
+
+In GS, provide as NEWLINE_DELIMITED_JSON. The appropriate action to take for each row is determined as follows:
+
+1. Create: If a row has keys but not the "id" key, do a create.
+2. Update: If a row has 2 or more keys and one of them is the "id" key, do an update.
+3. Delete: If a row has only one key and it is the "id" key, delete it.
+ '''
+
 import treldev.gcputils
 import argparse, sys, json, tempfile
 import sflib
