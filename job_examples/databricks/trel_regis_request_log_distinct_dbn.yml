@@ -1,0 +1,25 @@
+name: request_log_distinct_dbn
+
+execution.profile: databricks_notebookjob
+
+execution.source_code.main:
+  class: databricks_notebookjob
+  path: https://____________.cloud.databricks.com#___job_id____
+  branch: master
+
+repository_map:
+  - request_log: s3-us-east2
+
+scheduler:
+  class: single_instance
+  depends_on: [ request_log ]
+  labels: [ demo ]
+  instance_ts_precisions: [ D ]
+  cron_constraint: "0 0 * * *"
+  schedule_ts_min: "2021-01-01 00:00:00"
+
+execution.output_generator:
+  class: default
+  outputs:
+  - dataset_class: request_log_distinct
+
