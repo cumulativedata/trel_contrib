@@ -16,7 +16,7 @@ dataset_class_prefix: "salesforce."
 instance_prefix: null # it is recommended you specify a value here, even when null.
 instance_ts_precision: D # change based on frequency of drop
 label: prod
-repository: bq_us # specify destination repository
+repository: bq-us # specify destination repository
 
 table_whitelist:
   - User
