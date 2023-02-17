@@ -5,7 +5,7 @@ execution.profile: bigquery
 
 execution.source_code.main:
   class: github
-  branch: master
+  branch: main
   path: git@github.com:cumulativedata/trel_contrib.git
 execution.main_executable: _code/complete_pipelines/salesforce_3step/fix_titles.py
 
