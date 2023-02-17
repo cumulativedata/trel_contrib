@@ -12,7 +12,9 @@ execution.source_code.main:
 execution.main_executable: _code/export_jobs/salesforce/gs_to_salesforce.py
 execution.checked_out_files_to_use:
   - _code/sensors/salesforce/sflib.py
-execution.additional_arguments: [ '--target_table=Lead' ]
+
+# IMPORTANT: Uncomment this after setting the table correctly
+# execution.additional_arguments: [ '--target_table=Lead' ]
 
 repository_map:
   - <input_dataset_class> : <gs repository>
@@ -20,7 +22,7 @@ repository_map:
 scheduler:
   class: single_instance
   depends_on: [ <input_dataset_class> ]
-  labels: [ master ]
+  labels: [ prod ]
   instance_ts_precisions: [ D ]
   cron_constraint: "0 0 * * *"
   schedule_ts_min: "2021-01-01 00:00:00"
