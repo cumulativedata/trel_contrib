@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-''' A Trel job script that can push data from Google Storage to Salesforce. See sample registration file.
+''' A Trel job script that can push data from Google Storage or BigQuery to Salesforce. See sample registration file.
+
+Either provide a BigQuery path or a Google storage path.
 
 In GS, provide as NEWLINE_DELIMITED_JSON. The appropriate action to take for each row is determined as follows:
 
@@ -9,7 +11,8 @@ In GS, provide as NEWLINE_DELIMITED_JSON. The appropriate action to take for eac
  '''
 
 import treldev.gcputils
-import argparse, sys, json, tempfile
+from google.cloud import bigquery
+import argparse, sys, json, tempfile, time
 import sflib
 
 if __name__ == '__main__':
@@ -20,7 +23,13 @@ if __name__ == '__main__':
     input_ = list(args['inputs'].values())[0][0]
     output = list(args['outputs'].values())[0][0]
 
-    input_gs_uri = treldev.gcputils.GSURI(input_['uri'])
+    if input_['uri'].startswith('bq://'):
+        temp_gs_path = args['temp_paths']['gs'] + f'{time.time()}/'
+        input_gs_uri = treldev.gcputils.GSURI(temp_gs_path)
+        input_bq = treldev.gcputils.BigQueryURI(input_['uri'])
+        input_bq.export_to_gs( input_gs_uri.uri + "part-*", {"destination_format": bigquery.job.DestinationFormat.NEWLINE_DELIMITED_JSON} )
+    else:
+        input_gs_uri = treldev.gcputils.GSURI(input_['uri'])
     cli_args_list = args['parameters']['execution.additional_arguments'] + \
         args['parameters']['execution.additional_arguments_cli']
 
