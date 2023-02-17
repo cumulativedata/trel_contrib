@@ -1,0 +1,32 @@
+# This job can create, update or delete data
+
+name: ___.in_salesforce #
+job_description: "Exports dataset ___ to salesforce."
+
+execution.profile: python
+
+execution.source_code.main:
+  class: github
+  branch: main
+  path: git@github.com:cumulativedata/trel_contrib.git
+execution.main_executable: _code/export_jobs/salesforce/gs_to_salesforce.py
+execution.checked_out_files_to_use:
+  - _code/sensors/salesforce/sflib.py
+execution.additional_arguments: [ '--target_table=Lead' ]
+
+repository_map:
+  - <input_dataset_class> : <gs repository>
+
+scheduler:
+  class: single_instance
+  depends_on: [ <input_dataset_class> ]
+  labels: [ master ]
+  instance_ts_precisions: [ D ]
+  cron_constraint: "0 0 * * *"
+  schedule_ts_min: "2021-01-01 00:00:00"
+
+execution.output_generator:
+  class: default
+  outputs:
+  - dataset_class: ___.in_salesforce
+
