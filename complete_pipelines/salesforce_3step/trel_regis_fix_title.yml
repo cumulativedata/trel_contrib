@@ -1,0 +1,27 @@
+name: salesforce.Lead.fixed_titles
+job_description: "Standardizes titles in salesforce.Lead."
+
+execution.profile: bigquery
+
+execution.source_code.main:
+  class: github
+  branch: main
+  path: git@github.com:cumulativedata/trel_contrib.git
+execution.main_executable: _code/complete_pipelines/salesforce_3step/fix_titles.py
+
+repository_map:
+  - salesforce.Lead: bq-us
+    salesforce.Lead.fixed_titles: bq-us
+
+scheduler:
+  class: single_instance
+  depends_on: [ salesforce.Lead ]
+  labels: [ prod ]
+  instance_ts_precisions: [ D ]
+  cron_constraint: "0 0 * * *"
+  schedule_ts_min: "2023-01-01 00:00:00"
+
+execution.output_generator:
+  class: default
+  outputs:
+  - dataset_class: salesforce.Lead.fixed_titles

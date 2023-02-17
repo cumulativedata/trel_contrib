@@ -15,8 +15,8 @@ dataset_class: salesforce.User # Other parameters can compute this
 dataset_class_prefix: "salesforce."
 instance_prefix: null # it is recommended you specify a value here, even when null.
 instance_ts_precision: D # change based on frequency of drop
-label: master
-repository: bq_us # specify destination repository
+label: prod
+repository: bq-us # specify destination repository
 
 table_whitelist:
   - User
