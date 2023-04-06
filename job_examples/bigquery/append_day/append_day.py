@@ -1,17 +1,13 @@
 import argparse, yaml
 from treldev.gcputils import BigQueryURI
+from treldev import get_args
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--transactions")
-    parser.add_argument("--transactions_30day", dest="t30")
-    parser.add_argument("--output")
-    parser.add_argument("--_schedule_instance_ts", dest="ts")
-    args, _ = parser.parse_known_args()
-
-    output_bq = BigQueryURI(args.output)
-    transactions_bq = BigQueryURI(args.transactions)
-    t30_bq = BigQueryURI(args.t30)
+    args = get_args()
+    
+    output_bq = BigQueryURI(args['outputs']['output'][0]['uri'])
+    transactions_bq = BigQueryURI(args['inputs']['transactions'][0]['uri'])
+    t30_bq = BigQueryURI(args['inputs']['transactions_30day'][0]['uri'])
 
     output_bq.save_sql_results(f"""
 with 
@@ -26,3 +22,5 @@ SELECT t30.* FROM t30
 CROSS JOIN max_ 
 WHERE ts >= DATETIME_SUB(max_ts, INTERVAL 29 DAY)
 """)
+
+    output_bq.validate(args, save=True, sodacore_check=True)
