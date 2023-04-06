@@ -14,7 +14,7 @@ with
 
 transactions as (SELECT * FROM `{transactions_bq.path}`)
 ,t30 as (SELECT * FROM `{t30_bq.path}`)
-,max_ as (SELECT cast("{args.ts}" AS datetime) max_ts)
+,max_ as (SELECT cast("{args['schedule_instance_ts']}" AS datetime) max_ts)
 
 SELECT * FROM transactions 
 UNION ALL 
