@@ -204,7 +204,7 @@ class DestinationProtocol(object):
             bq_type = self.patype_mapping[self.sensor.columns[i].data_type]
             if self.sensor.columns[i].data_type in (
                     pyodbc.SQL_TYPE_DATE,
-                    pyodbc.SQL_TYPE_TIME
+                    pyodbc.SQL_TYPE_TIME,
                     pyodbc.SQL_TYPE_TIMESTAMP
                     ):
                 if row[i] is not None:
