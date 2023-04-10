@@ -204,7 +204,9 @@ class DestinationProtocol(object):
             if self.sensor.columns[i].data_type in (
                     pyodbc.SQL_TYPE_DATE,
                     pyodbc.SQL_TYPE_TIME,
-                    pyodbc.SQL_TYPE_TIMESTAMP
+                    pyodbc.SQL_TYPE_TIMESTAMP,
+                    pyodbc.SQL_DECIMAL,
+                    pyodbc.SQL_NUMERIC,
                     ):
                 if row[i] is not None:
                     row[i] = str(row[i])
