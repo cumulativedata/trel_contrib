@@ -25,7 +25,7 @@ Customers as (select * from {customers_ath.path})
 
 SELECT 
   c.CustomerID,
-  SUM(cast(b.BilledAmount as float)) AS total_billed_amount,
+  SUM(cast(b.BilledAmount as real)) AS total_billed_amount,
   COUNT(DISTINCT ci.InteractionID) AS total_interactions,
   COUNT(DISTINCT st.TicketID) AS total_support_tickets,
   (CASE 
