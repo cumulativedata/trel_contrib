@@ -201,8 +201,17 @@ class DestinationProtocol(object):
 
     def write_row_to_file(self, row, f):
         for i in range(len(row)):
-            if type(row[i]) is datetime.datetime:
-                row[i] = str(row[i])
+            bq_type = self.patype_mapping[self.sensor.columns[i].data_type]
+            if self.sensor.columns[i].data_type in (
+                    pyodbc.SQL_TYPE_DATE,
+                    pyodbc.SQL_TYPE_TIME
+                    pyodbc.SQL_TYPE_TIMESTAMP
+                    ):
+                if row[i] is not None:
+                    row[i] = str(row[i])
+            elif self.sensor.columns[i].data_type == pyodbc.SQL_BINARY:
+                if row[i] is not None:
+                    row[i] = base64.b64encode(row[i]).decode('utf-8')
         json.dump(dict(filter((lambda x: x[1] is not None), zip(self.col_names, row))), f)
         f.write('\n')
     
@@ -231,7 +240,7 @@ class S3Destination(DestinationProtocol):
         pyodbc.SQL_NUMERIC: 'decimal128', #TODO
         pyodbc.SQL_SMALLINT: 'int16',
         pyodbc.SQL_INTEGER: 'int32',
-        pyodbc.SQL_BIT: 'INTEGER', # test
+        pyodbc.SQL_BIT: 'int8', # test
         pyodbc.SQL_TINYINT: 'int8',
         pyodbc.SQL_BIGINT: 'int64',
         pyodbc.SQL_REAL: 'float64',
@@ -261,7 +270,7 @@ class S3Destination(DestinationProtocol):
         if self.sensor.compression == 'gz':
             subprocess.check_call(f"gzip {filename}", shell=True)
             filename = filename + '.gz'
-            file_uri = self.uri + f"part-{self.batch_num:>05}.gz"
+            file_uri = self.uri + f"part-{self.batch_num:>010}.gz"
         if self.sensor.compression == 'parquet':
             print("Detected parquet format", file=sys.stderr)
             import pandas as pd
@@ -290,9 +299,9 @@ class S3Destination(DestinationProtocol):
             # Write the Arrow Table to a Parquet file
             output_filename = f"{filename}.parquet"
             pq.write_table(arrow_table, output_filename)
-            file_uri = self.uri + f"part-{self.batch_num:>05}.parquet"
+            file_uri = self.uri + f"part-{self.batch_num:>010}.parquet"
         else:
-            file_uri = self.uri + f"part-{self.batch_num:>05}"
+            file_uri = self.uri + f"part-{self.batch_num:>010}"
         print(f"final file uri {file_uri}", file=sys.stderr)
         self.s3_commands.upload_file(filename, file_uri)
         #os.remove(filename)
