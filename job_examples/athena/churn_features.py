@@ -17,7 +17,7 @@ if __name__ == '__main__':
     
     output_ath.save_sql_results(output_s3.uri, f"""
 with
-Customers as (select * from `{customers_ath.path}`)
+Customers as (select * from {customers_ath.path})
 ,Subscriptions as (select * from {subscriptions_ath.path})
 ,Billing as (select * from {billing_ath.path})
 ,CustomerInteractions as (select * from {customer_interactions_ath.path})
