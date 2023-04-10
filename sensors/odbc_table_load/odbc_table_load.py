@@ -212,6 +212,46 @@ class DestinationProtocol(object):
 class S3Destination(DestinationProtocol):
 
     protocol = 's3'
+    parquet_type_mapping = {
+        pyodbc.SQL_CHAR: 'string',
+        pyodbc.SQL_VARCHAR: 'string',
+        pyodbc.SQL_LONGVARCHAR: 'string',
+        pyodbc.SQL_WCHAR: 'string',
+        pyodbc.SQL_WVARCHAR: 'string',
+        pyodbc.SQL_WLONGVARCHAR: 'string',
+        pyodbc.SQL_GUID: 'string',
+        pyodbc.SQL_TYPE_DATE: 'date',
+        pyodbc.SQL_TYPE_TIME: 'time32',
+        pyodbc.SQL_TYPE_TIMESTAMP: 'timestamp(ms)',
+        #pyodbc.SQL_TYPE_UTCDATETIME: 'DATETIME',
+        #pyodbc.SQL_TYPE_UTCTIME: 'DATETIME',
+        pyodbc.SQL_BINARY: 'binary',
+        pyodbc.SQL_VARBINARY: 'binary',
+        pyodbc.SQL_DECIMAL: 'decimal128', #TODO
+        pyodbc.SQL_NUMERIC: 'decimal128', #TODO
+        pyodbc.SQL_SMALLINT: 'int16',
+        pyodbc.SQL_INTEGER: 'int32',
+        pyodbc.SQL_BIT: 'INTEGER', # test
+        pyodbc.SQL_TINYINT: 'int8',
+        pyodbc.SQL_BIGINT: 'int64',
+        pyodbc.SQL_REAL: 'float64',
+        pyodbc.SQL_FLOAT: 'float32',
+        pyodbc.SQL_DOUBLE: 'float64',
+        pyodbc.SQL_INTERVAL_MONTH: 'string',
+        pyodbc.SQL_INTERVAL_YEAR: 'string',
+        pyodbc.SQL_INTERVAL_YEAR_TO_MONTH: 'string',
+        pyodbc.SQL_INTERVAL_DAY: 'string',
+        pyodbc.SQL_INTERVAL_HOUR: 'string',
+        pyodbc.SQL_INTERVAL_MINUTE: 'string',
+        pyodbc.SQL_INTERVAL_SECOND: 'string',
+        pyodbc.SQL_INTERVAL_DAY_TO_HOUR: 'string',
+        pyodbc.SQL_INTERVAL_DAY_TO_MINUTE: 'string',
+        pyodbc.SQL_INTERVAL_DAY_TO_SECOND: 'string',
+        pyodbc.SQL_INTERVAL_HOUR_TO_MINUTE: 'string',
+        pyodbc.SQL_INTERVAL_HOUR_TO_SECOND: 'string',
+        pyodbc.SQL_INTERVAL_MINUTE_TO_SECOND: 'string',
+    }
+    
 
     def prepare_inner(self):
         self.s3_commands = treldev.S3Commands(credentials=self.sensor.credentials)
@@ -222,6 +262,25 @@ class S3Destination(DestinationProtocol):
             subprocess.check_call(f"gzip {filename}", shell=True)
             filename = filename + '.gz'
             file_uri = self.uri + f"part-{self.batch_num:>05}.gz"
+        if self.sensor.compression == 'parquet':
+            import pandas as pd
+            import pyarrow as pa
+            import pyarrow.parquet as pq
+
+            # Read JSON file into a pandas DataFrame
+            df = pd.read_json(filename)
+
+            # Define the schema for the Parquet file
+            schema_fields = [pa.field(column["name"], self.parquet_type_mapping[column.data_type])  for col in self.sensor.columns ]
+            schema = pa.schema(schema_fields)
+
+            # Convert the DataFrame to an Arrow Table with the specified schema
+            arrow_table = pa.Table.from_pandas(df, schema=schema)
+
+            # Write the Arrow Table to a Parquet file
+            output_filename = f"{filename}.parquet"
+            pq.write_table(arrow_table, output_filename)
+            file_uri = self.uri + f"part-{self.batch_num:>05}.parquet"
         else:
             file_uri = self.uri + f"part-{self.batch_num:>05}"
         self.s3_commands.upload_file(filename, file_uri)
