@@ -25,8 +25,8 @@ Customers as (select * from {customers_ath.path})
 
 SELECT 
   c.CustomerID,
-  DATE_DIFF(current_date, c.RegistrationDate) AS days_since_registration,
-  DATE_DIFF(current_date, MAX(ci.InteractionDate)) AS days_since_last_interaction,
+  DATE_DIFF('day',current_date, c.RegistrationDate) AS days_since_registration,
+  DATE_DIFF('day',current_date, MAX(ci.InteractionDate)) AS days_since_last_interaction,
   SUM(b.BilledAmount) AS total_billed_amount,
   COUNT(DISTINCT ci.InteractionID) AS total_interactions,
   COUNT(DISTINCT st.TicketID) AS total_support_tickets,
