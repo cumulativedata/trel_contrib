@@ -269,7 +269,7 @@ class S3Destination(DestinationProtocol):
             import pyarrow.parquet as pq
 
             # Read JSON file into a pandas DataFrame
-            df = pd.read_json(filename)
+            df = pd.read_json(filename, lines=True)
 
             # Define the schema for the Parquet file
             schema_fields = [pa.field(column["name"], self.parquet_type_mapping[column.data_type])  for col in self.sensor.columns ]
