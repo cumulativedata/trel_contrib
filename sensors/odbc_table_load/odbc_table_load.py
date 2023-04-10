@@ -222,7 +222,7 @@ class S3Destination(DestinationProtocol):
         pyodbc.SQL_GUID: 'string',
         pyodbc.SQL_TYPE_DATE: 'date',
         pyodbc.SQL_TYPE_TIME: 'time32',
-        pyodbc.SQL_TYPE_TIMESTAMP: 'timestamp(ms)',
+        pyodbc.SQL_TYPE_TIMESTAMP: 'string',
         #pyodbc.SQL_TYPE_UTCDATETIME: 'DATETIME',
         #pyodbc.SQL_TYPE_UTCTIME: 'DATETIME',
         pyodbc.SQL_BINARY: 'binary',
