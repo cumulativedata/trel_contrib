@@ -277,7 +277,7 @@ class S3Destination(DestinationProtocol):
                 t = self.parquet_type_mapping[column.data_type]
                 if t == 'timestamp(ms)':
                     t = pa.timestamp('ms')
-                schema_fields.append(pa.field(column.column_name, t)
+                schema_fields.append(pa.field(column.column_name, t))
             schema = pa.schema(schema_fields)
 
             # Convert the DataFrame to an Arrow Table with the specified schema
