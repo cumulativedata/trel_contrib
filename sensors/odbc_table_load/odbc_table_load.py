@@ -289,6 +289,8 @@ class S3Destination(DestinationProtocol):
                     t = pa.timestamp('ms')
                 if t == 'date':
                     t = pa.date32()
+                if t == 'decimal128':
+                    t = pa.decimal128(column[6],column[4])
                 print(f"Data types {column.column_name} {t}", file=sys.stderr)
                 
                 schema_fields.append(pa.field(column.column_name, t))
