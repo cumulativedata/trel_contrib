@@ -15,7 +15,7 @@ if __name__ == '__main__':
     customer_interactions_ath = AthenaURI(args['inputs']['raw.CustomerInteractions'][0]['uri'])
     support_tickets_ath = AthenaURI(args['inputs']['raw.SupportTickets'][0]['uri'])
     
-    output_ath.save_sql_results(output_s3.path, f"""
+    output_ath.save_sql_results(output_s3.uri, f"""
 with
 Customers as (select * from `{customers_ath.path}`)
 ,Subscriptions as (select * from {subscriptions_ath.path})
