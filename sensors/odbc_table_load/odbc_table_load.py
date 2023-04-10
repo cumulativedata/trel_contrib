@@ -272,7 +272,7 @@ class S3Destination(DestinationProtocol):
             df = pd.read_json(filename, lines=True)
 
             # Define the schema for the Parquet file
-            schema_fields = [pa.field(column["name"], self.parquet_type_mapping[column.data_type])  for col in self.sensor.columns ]
+            schema_fields = [pa.field(column["name"], self.parquet_type_mapping[column.data_type])  for column in self.sensor.columns ]
             schema = pa.schema(schema_fields)
 
             # Convert the DataFrame to an Arrow Table with the specified schema
