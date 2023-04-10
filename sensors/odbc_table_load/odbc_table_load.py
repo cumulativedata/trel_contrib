@@ -263,6 +263,7 @@ class S3Destination(DestinationProtocol):
             filename = filename + '.gz'
             file_uri = self.uri + f"part-{self.batch_num:>05}.gz"
         if self.sensor.compression == 'parquet':
+            self.sensor.logger.debug("Detected parquet format")
             import pandas as pd
             import pyarrow as pa
             import pyarrow.parquet as pq
@@ -284,7 +285,7 @@ class S3Destination(DestinationProtocol):
         else:
             file_uri = self.uri + f"part-{self.batch_num:>05}"
         self.s3_commands.upload_file(filename, file_uri)
-        os.remove(filename)
+        #os.remove(filename)
 
     def finish_inner(self):
         with tempfile.NamedTemporaryFile('w') as f:
