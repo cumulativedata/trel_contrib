@@ -1,12 +1,12 @@
 import argparse, yaml
-from treldev.awsutils import AthenaURI
+from treldev.awsutils import AthenaURI, S3URI
 from treldev import get_args
 
 if __name__ == '__main__':
     args = get_args()
     schedule_instance_ts = args['schedule_instance_ts']
 
-    output_s3 = AthenaURI(args['outputs']['churn_features'][0]['uri'])
+    output_s3 = S3URI(args['outputs']['churn_features'][0]['uri'])
     output_ath = AthenaURI(args['outputs']['churn_features_athena'][0]['uri'])
 
     customers_ath = AthenaURI(args['inputs']['raw.Customers'][0]['uri'])
