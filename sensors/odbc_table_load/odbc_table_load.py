@@ -201,7 +201,6 @@ class DestinationProtocol(object):
 
     def write_row_to_file(self, row, f):
         for i in range(len(row)):
-            bq_type = self.patype_mapping[self.sensor.columns[i].data_type]
             if self.sensor.columns[i].data_type in (
                     pyodbc.SQL_TYPE_DATE,
                     pyodbc.SQL_TYPE_TIME,
