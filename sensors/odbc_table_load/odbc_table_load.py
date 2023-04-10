@@ -277,6 +277,8 @@ class S3Destination(DestinationProtocol):
                 t = self.parquet_type_mapping[column.data_type]
                 if t == 'timestamp(ms)':
                     t = pa.timestamp('ms')
+                print(f"Data types {column.column_name} {t}", file=sys.stderr)
+                
                 schema_fields.append(pa.field(column.column_name, t))
                 if column.column_name not in df:
                     df[column.column_name] = None
