@@ -302,8 +302,8 @@ class S3Destination(DestinationProtocol):
             arrow_table = pa.Table.from_pandas(df, schema=schema)
 
             # Write the Arrow Table to a Parquet file
-            output_filename = f"{filename}.parquet"
-            pq.write_table(arrow_table, output_filename)
+            filename = f"{filename}.parquet"
+            pq.write_table(arrow_table, filename)
             file_uri = self.uri + f"part-{self.batch_num:>010}.parquet"
         else:
             file_uri = self.uri + f"part-{self.batch_num:>010}"
