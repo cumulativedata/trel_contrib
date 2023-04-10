@@ -6,7 +6,8 @@ if __name__ == '__main__':
     args = get_args()
     schedule_instance_ts = args['schedule_instance_ts']
 
-    output_ath = AthenaURI(args['outputs']['churn_features'][0]['uri'])
+    output_s3 = AthenaURI(args['outputs']['churn_features'][0]['uri'])
+    output_ath = AthenaURI(args['outputs']['churn_features_athena'][0]['uri'])
 
     customers_ath = AthenaURI(args['inputs']['raw.Customers'][0]['uri'])
     subscriptions_ath = AthenaURI(args['inputs']['raw.Subscriptions'][0]['uri'])
@@ -14,7 +15,7 @@ if __name__ == '__main__':
     customer_interactions_ath = AthenaURI(args['inputs']['raw.CustomerInteractions'][0]['uri'])
     support_tickets_ath = AthenaURI(args['inputs']['raw.SupportTickets'][0]['uri'])
     
-    output_bq.save_sql_results(f"""
+    output_ath.save_sql_results(output_s3.path, f"""
 with
 Customers as (select * from `{customers_ath.path}`)
 ,Subscriptions as (select * from {subscriptions_ath.path})
