@@ -237,8 +237,8 @@ class S3Destination(DestinationProtocol):
         #pyodbc.SQL_TYPE_UTCTIME: 'DATETIME',
         pyodbc.SQL_BINARY: 'binary',
         pyodbc.SQL_VARBINARY: 'binary',
-        pyodbc.SQL_DECIMAL: 'decimal128', #TODO
-        pyodbc.SQL_NUMERIC: 'decimal128', #TODO
+        pyodbc.SQL_DECIMAL: 'string', #TODO
+        pyodbc.SQL_NUMERIC: 'string', #TODO
         pyodbc.SQL_SMALLINT: 'int16',
         pyodbc.SQL_INTEGER: 'int32',
         pyodbc.SQL_BIT: 'int8', # test
