@@ -300,6 +300,7 @@ class S3Destination(DestinationProtocol):
 
             # Convert the DataFrame to an Arrow Table with the specified schema
             arrow_table = pa.Table.from_pandas(df, schema=schema)
+            os.remove(filename)
 
             # Write the Arrow Table to a Parquet file
             filename = f"{filename}.parquet"
@@ -309,7 +310,7 @@ class S3Destination(DestinationProtocol):
             file_uri = self.uri + f"part-{self.batch_num:>010}"
         print(f"final file uri {file_uri}", file=sys.stderr)
         self.s3_commands.upload_file(filename, file_uri)
-        #os.remove(filename)
+        os.remove(filename)
 
     def finish_inner(self):
         with tempfile.NamedTemporaryFile('w') as f:
