@@ -25,4 +25,4 @@ WHERE ts >= DATETIME_SUB(max_ts, INTERVAL 29 DAY)
 
     output_bq.validate(args, save=True,
                        sodacore_check=True,
-                       sodacore_schema_check=False)
+                       sodacore_schema_check=True)
