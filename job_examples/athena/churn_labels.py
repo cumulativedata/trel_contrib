@@ -28,7 +28,7 @@ Subscriptions as (select * from {subscriptions_ath.path})
 
 SELECT
   CustomerID,
-  MIN(churn_label)
+  MIN(churn_label) churn_label
 FROM churned_customers
 GROUP BY 1;
 """)
