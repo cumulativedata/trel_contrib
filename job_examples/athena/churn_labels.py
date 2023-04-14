@@ -29,7 +29,8 @@ Subscriptions as (select * from {subscriptions_ath.path})
 SELECT
   CustomerID,
   MIN(churn_label)
-FROM churned_customers;
+FROM churned_customers
+GROUP BY 1;
 """)
 
     output_ath.validate(args, save=True, sodacore_check=True)
