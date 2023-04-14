@@ -20,7 +20,7 @@ Subscriptions as (select * from {subscriptions_ath.path})
     CustomerID,
     CASE
       WHEN Status = 'canceled' THEN 1
-      WHEN Status = 'expired' AND datediff(RenewalDate, EndDate) > 30 THEN 1
+      WHEN Status = 'expired' THEN 1
       ELSE 0
     END AS churn_label
   FROM Subscriptions
