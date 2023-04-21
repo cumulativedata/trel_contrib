@@ -29,7 +29,7 @@ SELECT
   COUNT(DISTINCT ci.InteractionID) AS total_interactions,
   COUNT(DISTINCT st.TicketID) AS total_support_tickets,
   (CASE 
-    WHEN s.SubscriptionStatus = 'Active' THEN 0
+    WHEN s.Status = 'Active' THEN 0
     ELSE 1
   END) AS churn
 FROM 
