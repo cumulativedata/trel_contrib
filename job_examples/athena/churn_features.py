@@ -43,5 +43,5 @@ LEFT JOIN
 LEFT JOIN 
   SupportTickets st ON c.CustomerID = st.CustomerID
 GROUP BY 
-  c.CustomerID, s.SubscriptionStatus;
+  c.CustomerID, s.Status;
 """)
