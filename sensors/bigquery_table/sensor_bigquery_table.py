@@ -56,6 +56,8 @@ class BigQueryTableSensor(treldev.Sensor):
             except:
                 print(f"Unable to parse ts from table {table}",file=sys.stderr)
                 continue
+            if instance_ts in existing_tss:
+                continue
 
             if self.max_instance_age_seconds is not None and \
                instance_ts < self.round_now - datetime.timedelta(seconds=self.max_instance_age_seconds):
