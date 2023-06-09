@@ -5,29 +5,7 @@ This sensor can monitor a given S3 path to look for data drops with an optional 
 E.g., Finding If data is placed into `s3://a/b/c/abc_20210201` and sensor is configured to with bucket as `a` and
 prefix as `b/c`, this data path will be cataloged as ``<dataset_class>,,20210201,<label>,<repository>``
 
-Example configuration file
-
-::
-
-   bucket: mybucket
-   prefix: path1/  # The trailing slash is important.
-
-   # This has to contain the full prefix. E.g. `abc\_` for `abc_20210201`. Just `abc` or `ab` will not be enough.
-   # subfolder_prefix: null
-
-   instance_ts_precision: D
-   instance_ts_format: '%Y%m%d'
-
-   # success_criteria allows additional conditions to be met before the subfolder is added to the catalog. E.g.,
-   #   success_file: Add the path if it contains _SUCCESS
-   #   manifest_file: Add the path if it contains a .manifest file
-   #   manifest_file_with_replacement: If a manifest file is found, replace it with an _SUCCESS file. Then add it to catalog.
-   #   { min_files: 100 }: Add the path if it contains at-least this many files.
-   #   { min_age: 3600 }: Add the path if the newest file is at least this many seconds old.
-   #   null: If a single file is found in the subfolder, the path gets added. Good for crawling historical data.
-   success_criteria: null
-
-
+See example configuration file.
 
 Credentials: ``aws.access_key``
 
@@ -58,7 +36,7 @@ class S3PathSensor(treldev.Sensor):
         self.locking_seconds = self.config.get('locking_seconds',30)
         self.credentials = credentials
         self.known_contents = set([])
-        self.s3_client = treldev.awsutils.S3.get_client()
+        self.s3_client = treldev.awsutils.S3.get_client(None)
 
         global boto3, ClientError
         import boto3
