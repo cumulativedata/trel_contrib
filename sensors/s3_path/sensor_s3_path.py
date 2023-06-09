@@ -175,7 +175,7 @@ class S3PathSensor(treldev.Sensor):
                 continue
             subfolder_tss[instance_ts] = subfolder
         existing_tss = set([ ds['instance_ts'] for ds in datasets ])
-        for instance_ts, subfolder in subfolder_tss.items():
+        for instance_ts, subfolder in sorted(subfolder_tss.items()):
             self.known_contents.add(subfolder)
             #print("Examining", subfolder)
             
