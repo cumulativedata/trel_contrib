@@ -201,8 +201,18 @@ class DestinationProtocol(object):
 
     def write_row_to_file(self, row, f):
         for i in range(len(row)):
-            if type(row[i]) is datetime.datetime:
-                row[i] = str(row[i])
+            if self.sensor.columns[i].data_type in (
+                    pyodbc.SQL_TYPE_DATE,
+                    pyodbc.SQL_TYPE_TIME,
+                    pyodbc.SQL_TYPE_TIMESTAMP,
+                    pyodbc.SQL_DECIMAL,
+                    pyodbc.SQL_NUMERIC,
+                    ):
+                if row[i] is not None:
+                    row[i] = str(row[i])
+            elif self.sensor.columns[i].data_type == pyodbc.SQL_BINARY:
+                if row[i] is not None:
+                    row[i] = base64.b64encode(row[i]).decode('utf-8')
         json.dump(dict(filter((lambda x: x[1] is not None), zip(self.col_names, row))), f)
         f.write('\n')
     
@@ -212,6 +222,46 @@ class DestinationProtocol(object):
 class S3Destination(DestinationProtocol):
 
     protocol = 's3'
+    parquet_type_mapping = {
+        pyodbc.SQL_CHAR: 'string',
+        pyodbc.SQL_VARCHAR: 'string',
+        pyodbc.SQL_LONGVARCHAR: 'string',
+        pyodbc.SQL_WCHAR: 'string',
+        pyodbc.SQL_WVARCHAR: 'string',
+        pyodbc.SQL_WLONGVARCHAR: 'string',
+        pyodbc.SQL_GUID: 'string',
+        pyodbc.SQL_TYPE_DATE: 'string',
+        pyodbc.SQL_TYPE_TIME: 'string',
+        pyodbc.SQL_TYPE_TIMESTAMP: 'string',
+        #pyodbc.SQL_TYPE_UTCDATETIME: 'DATETIME',
+        #pyodbc.SQL_TYPE_UTCTIME: 'DATETIME',
+        pyodbc.SQL_BINARY: 'binary',
+        pyodbc.SQL_VARBINARY: 'binary',
+        pyodbc.SQL_DECIMAL: 'string', #TODO
+        pyodbc.SQL_NUMERIC: 'string', #TODO
+        pyodbc.SQL_SMALLINT: 'int16',
+        pyodbc.SQL_INTEGER: 'int32',
+        pyodbc.SQL_BIT: 'int8', # test
+        pyodbc.SQL_TINYINT: 'int8',
+        pyodbc.SQL_BIGINT: 'int64',
+        pyodbc.SQL_REAL: 'float64',
+        pyodbc.SQL_FLOAT: 'float32',
+        pyodbc.SQL_DOUBLE: 'float64',
+        pyodbc.SQL_INTERVAL_MONTH: 'string',
+        pyodbc.SQL_INTERVAL_YEAR: 'string',
+        pyodbc.SQL_INTERVAL_YEAR_TO_MONTH: 'string',
+        pyodbc.SQL_INTERVAL_DAY: 'string',
+        pyodbc.SQL_INTERVAL_HOUR: 'string',
+        pyodbc.SQL_INTERVAL_MINUTE: 'string',
+        pyodbc.SQL_INTERVAL_SECOND: 'string',
+        pyodbc.SQL_INTERVAL_DAY_TO_HOUR: 'string',
+        pyodbc.SQL_INTERVAL_DAY_TO_MINUTE: 'string',
+        pyodbc.SQL_INTERVAL_DAY_TO_SECOND: 'string',
+        pyodbc.SQL_INTERVAL_HOUR_TO_MINUTE: 'string',
+        pyodbc.SQL_INTERVAL_HOUR_TO_SECOND: 'string',
+        pyodbc.SQL_INTERVAL_MINUTE_TO_SECOND: 'string',
+    }
+    
 
     def prepare_inner(self):
         self.s3_commands = treldev.S3Commands(credentials=self.sensor.credentials)
@@ -221,9 +271,44 @@ class S3Destination(DestinationProtocol):
         if self.sensor.compression == 'gz':
             subprocess.check_call(f"gzip {filename}", shell=True)
             filename = filename + '.gz'
-            file_uri = self.uri + f"part-{self.batch_num:>05}.gz"
+            file_uri = self.uri + f"part-{self.batch_num:>010}.gz"
+        if self.sensor.compression == 'parquet':
+            print("Detected parquet format", file=sys.stderr)
+            import pandas as pd
+            import pyarrow as pa
+            import pyarrow.parquet as pq
+
+            # Read JSON file into a pandas DataFrame
+            df = pd.read_json(filename, lines=True, dtype=False)
+
+            # Define the schema for the Parquet file
+            schema_fields = []
+            for column in self.sensor.columns:
+                t = self.parquet_type_mapping[column.data_type]
+                if t == 'timestamp(ms)':
+                    t = pa.timestamp('ms')
+                if t == 'date':
+                    t = pa.date32()
+                if t == 'decimal128':
+                    t = pa.decimal128(column[6],column[4])
+                print(f"Data types {column.column_name} {t}", file=sys.stderr)
+                
+                schema_fields.append(pa.field(column.column_name, t))
+                if column.column_name not in df:
+                    df[column.column_name] = None
+            schema = pa.schema(schema_fields)
+
+            # Convert the DataFrame to an Arrow Table with the specified schema
+            arrow_table = pa.Table.from_pandas(df, schema=schema)
+            os.remove(filename)
+
+            # Write the Arrow Table to a Parquet file
+            filename = f"{filename}.parquet"
+            pq.write_table(arrow_table, filename)
+            file_uri = self.uri + f"part-{self.batch_num:>010}.parquet"
         else:
-            file_uri = self.uri + f"part-{self.batch_num:>05}"
+            file_uri = self.uri + f"part-{self.batch_num:>010}"
+        print(f"final file uri {file_uri}", file=sys.stderr)
         self.s3_commands.upload_file(filename, file_uri)
         os.remove(filename)
 

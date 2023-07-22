@@ -1,0 +1,44 @@
+sensor_id:  # specify
+
+sensor.source_code.main:
+  class: github
+  branch: main
+  path: https://github.com/cumulativedata/trel_contrib.git
+sensor.main_executable: _code/sensors/s3_path/sensor_s3_path.py
+
+manager_name: main
+credentials.requested_name: default
+
+
+dataset_class: # specify 
+instance_prefix: null # it is recommended you specify a value here, even when null.
+instance_ts_precision: D # change based on frequency of drop
+label: master
+repository: # specify destination repository
+
+instance_ts_format: '%Y%m%d'
+
+# See schema management for details. As for now, this is only used as the attribute
+# for the destination dataset and does not influence the schema of the destination.
+# That is decided by querying the source table only.
+schema_version: null
+
+sleep_duration: 10 # Sleep for this long after each check
+
+bucket:  # Look for the data in this bucket
+prefix:  # and prefix. The trailing slash is important. Eg. data/logs/
+
+# If your foldername has an additional prefix, place it here.
+# This has to contain the full prefix. E.g. `abc\_` for `abc_20210201`. Just `abc` or `ab` will not be enough.
+# subfolder_prefix: null
+
+# success_criteria allows additional conditions to be met before the subfolder is added to the catalog. E.g.,
+#   success_file: Add the path if it contains _SUCCESS
+#   manifest_file: Add the path if it contains a .manifest file
+#   manifest_file_with_replacement: If a manifest file is found, replace it with an _SUCCESS file. Then add it to catalog.
+#   { min_files: 100 }: Add the path if it contains at-least this many files.
+#   { min_age: 3600 }: Add the path if the newest file is at least this many seconds old.
+#   null: If the subfolder exists, the path gets added. Good for crawling historical data.
+success_criteria: null
+
+debug: []
