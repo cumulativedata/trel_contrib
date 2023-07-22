@@ -1,0 +1,32 @@
+name: churn_labels
+job_description: "Generates features for modeling churn."
+
+execution.profile: athena
+
+execution.source_code.main:
+  class: github
+  branch: main
+  path: git@github.com:cumulativedata/trel_contrib.git
+execution.main_executable: _code/job_examples/athena/churn_labels.py
+
+repository_map:
+  - raw.Subscriptions : athena-e2
+    
+scheduler:
+  class: single_instance
+  depends_on:
+   - raw.Subscriptions
+  labels: [ prod ]
+  instance_ts_precisions: [ D ]
+  cron_constraint: "0 0 * * *"
+  schedule_ts_min: "2023-04-01 00:00:00"
+
+execution.output_generator:
+  class: default
+  outputs:
+  - dataset_class: churn_labels
+    repository: s3-us-east2
+  - name: churn_labels_athena
+    repository: athena-e2
+    link_to_previous: True
+    
