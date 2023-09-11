@@ -173,7 +173,7 @@ class S3PathSensor(treldev.Sensor):
             except:
                 print(f"Unable to parse ts from subfolder {subfolder}",file=sys.stderr)
                 continue
-            subfolder_tss[instance_ts] = subfolder
+            subfolder_tss[str(instance_ts)] = subfolder
         existing_tss = set([ ds['instance_ts'] for ds in datasets ])
         if self.debug:
             self.logger.debug(f"exiting_tss {existing_tss}")
