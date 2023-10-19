@@ -175,17 +175,26 @@ class S3PathSensor(treldev.Sensor):
                 continue
             subfolder_tss[instance_ts] = subfolder
         existing_tss = set([ ds['instance_ts'] for ds in datasets ])
+        if self.debug:
+            self.logger.debug(f"exiting_tss {existing_tss}")
         for instance_ts, subfolder in sorted(subfolder_tss.items()):
-            self.known_contents.add(subfolder)
             #print("Examining", subfolder)
             
-            if instance_ts in existing_tss:
+            if str(instance_ts) in existing_tss:
+                if self.debug:
+                    self.logger.debug(f"For subfolder {subfolder} with instance_ts {instance_ts}, we found entry in existing_tss. Skipping.")
+                self.known_contents.add(subfolder)
                 continue
-
+            else:
+                if self.debug:
+                    self.logger.debug(f"For subfolder {subfolder} with instance_ts {instance_ts}, we found no entry in existing_tss.")
+                
             if self.max_instance_age_seconds is not None and \
                instance_ts < self.round_now - datetime.timedelta(seconds=self.max_instance_age_seconds):
+                self.known_contents.add(subfolder)
                 continue
             if self.min_instance_ts is not None and instance_ts < self.min_instance_ts:
+                self.known_contents.add(subfolder)
                 continue
 
             if self.success_criteria == 'success_file' and not self.verify_criteria_success_file(subfolder):
