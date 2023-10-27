@@ -1,11 +1,6 @@
 #!/usr/bin/env python3
 '''
-This sensor can monitor a given S3 path to look for data drops with an optional prefix and a date/time component.
-
-E.g., Finding If data is placed into `s3://a/b/c/abc_20210201` and sensor is configured to with bucket as `a` and
-prefix as `b/c`, this data path will be cataloged as ``<dataset_class>,,20210201,<label>,<repository>``
-
-See example configuration file.
+This sensor can monitor a given S3 path for data state. Based on the state, it will add entries to the catalog. 
 
 Credentials: ``aws.access_key``
 
@@ -53,6 +48,7 @@ class S3PathSensorMutable(treldev.Sensor):
             raise Exception(f"Unable to load state from {self.state_path_to_monitor}")
         existing_tss = set([ ds['instance_ts'] for ds in datasets ])
         ts = datetime.datetime.strptime(state[self.state_ts_key], self.instance_ts_format)
+        ts = datetime.datetime(*ts.timetuple()[:({'H':4,'D':3,'M':5}[self.instance_ts_precision])])
         if ts in existing_tss:
             return
         yield str(ts), { 'instance_prefix':self.instance_prefix,
