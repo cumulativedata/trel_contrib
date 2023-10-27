@@ -12,9 +12,9 @@ Credentials: ``aws.access_key``
 '''
 
 
-import argparse, os, sys, datetime, unittest
+import argparse, os, sys, datetime, unittest, json
 import treldev.awsutils
-from treldev.awsutils import S3Helper
+from treldev import S3Commands
 from os import listdir
 from os.path import isfile, join, isdir
 from sensor_s3_path import S3PathSensor, setup_for_test
@@ -25,10 +25,10 @@ class S3PathSensorMutable(treldev.Sensor):
         super().__init__(config, credentials, *args, **kwargs)
 
         self.mutable_data_path = self.config['mutable_data_path']
-        assert S3Helper._is_valid_s3_path(self.mutable_data_path)
+        assert S3Commands.is_valid_s3_path(self.mutable_data_path)
         
         self.state_path_to_monitor = self.config['state_path_to_monitor']
-        assert S3Helper._is_valid_s3_path(self.state_path_to_monitor)
+        assert S3Commands.is_valid_s3_path(self.state_path_to_monitor)
         _,_, self.state_path_bucket, self.state_path_prefix = self.state_path_to_monitor.split('/',3)
         
         self.state_ts_key = self.config.get('state_ts_key','ts')
@@ -40,7 +40,7 @@ class S3PathSensorMutable(treldev.Sensor):
         self.credentials = credentials
         self.known_contents = set([])
         self.s3_client = treldev.awsutils.S3.get_client(None)
-        self.s3_helper = S3Helper(self.s3_client, request_payer = self.request_payer)
+        self.s3_commands = S3Commands(credentials=credentials, request_payer = self.request_payer)
 
         global boto3, ClientError
         import boto3
@@ -48,7 +48,7 @@ class S3PathSensorMutable(treldev.Sensor):
         
     def get_new_datasetspecs(self, datasets):
         ''' If there is data ready to be inserted, this should return a datasetspec. Else, return None '''
-        state = self.s3_helper._load_file_as_dict(self.state_path_bucket, self.state_path_prefix)
+        state = json.loads(self.s3_commands.load_file_as_string(self.state_path_bucket, self.state_path_prefix))
         if not state:
             raise Exception(f"Unable to load state from {self.state_path_to_monitor}")
         existing_tss = set([ ds['instance_ts'] for ds in datasets ])
@@ -72,7 +72,7 @@ class Test(unittest.TestCase):
         The sensor is asked to monitor s3://trel-contrib-unittests/public/s3_path/set1/
         This is a public folder with "requestor pays" setup. Take a look at the folder contents
         to better understand the assertions.'''
-        setup_for_test()
+        credentials = setup_for_test()
         config = {
             'mutable_data_path':'s3://trel-contrib-unittests/public/s3_path/set1/',
             'state_path_to_monitor':'s3://trel-contrib-unittests/public/s3_path/state',
@@ -81,7 +81,7 @@ class Test(unittest.TestCase):
             'label':'test',
             'repository': 'some-s3-repo',
             }
-        s = S3PathSensorMutable(config,{},None,[])
+        s = S3PathSensorMutable(config,credentials,None,[])
         res = list(s.get_new_datasetspecs([]))
         res.sort()
         self.assertEqual(len(res),1)
@@ -89,7 +89,13 @@ class Test(unittest.TestCase):
         self.assertEqual(res[0][1]['alt_uri'],'s3://trel-contrib-unittests/public/s3_path/set1/')
         self.assertEqual(res[0][1]['instance_ts'],'2023-01-01 00:00:00')
         self.assertEqual(res[0][1]['instance_prefix'], None)
-                                               
+
+        res = list(s.get_new_datasetspecs([{'instance_ts':datetime.datetime(2023,1,1)}]))
+        self.assertEqual(len(res),0)
+        
+        res = list(s.get_new_datasetspecs([{'instance_ts':datetime.datetime(2023,1,1)}]))
+        self.assertEqual(len(res),0)
+        
 if __name__ == '__main__':
     treldev.Sensor.init_and_run(S3PathSensorMutable)
     

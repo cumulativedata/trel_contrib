@@ -226,11 +226,14 @@ def setup_for_test():
     import subprocess, json, boto3
     credentials_data = subprocess.check_output(['trel','--output_json','credentials']).decode('utf-8')
     aws_creds = None
+    credentials = {}
     for credential_string in credentials_data.split('\n'):
         if credential_string:
             credential = json.loads(credential_string)
+            value = credential['value']
+            credentials[credential['key']] = value
             if credential['key'] == 'aws.access_key':
-                aws_creds = json.loads(credential['value'])
+                aws_creds = json.loads(value)
     assert aws_creds is not None
 
     from unittest.mock import MagicMock
@@ -239,7 +242,7 @@ def setup_for_test():
         aws_access_key_id=aws_creds['key'],
         aws_secret_access_key=aws_creds['skey']
     ))
-    return
+    return credentials
 
 class Test(unittest.TestCase):
     def test_sensor(self):
