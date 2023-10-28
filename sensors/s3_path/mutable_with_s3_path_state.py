@@ -27,6 +27,7 @@ class S3PathSensorMutable(treldev.Sensor):
         _,_, self.state_path_bucket, self.state_path_prefix = self.state_path_to_monitor.split('/',3)
         
         self.state_ts_key = self.config.get('state_ts_key','ts')
+        self.offset_seconds = self.config['offset_seconds']
         self.locking_seconds = self.config.get('locking_seconds',30)
         self.instance_ts_precision = self.config['instance_ts_precision']
         self.instance_ts_format = self.config.get('instance_ts_format',"%Y-%m-%d %H:%M:%S")
@@ -50,6 +51,7 @@ class S3PathSensorMutable(treldev.Sensor):
         ts = datetime.datetime.strptime(state[self.state_ts_key], self.instance_ts_format)
         if self.debug:
             self.logger.debug(f"Found timestamp {ts} in {self.state_path_to_monitor}")
+        ts -= datetime.timedelta(
         ts = datetime.datetime(*ts.timetuple()[:({'H':4,'D':3,'M':5}[self.instance_ts_precision])])
         if self.debug:
             self.logger.debug(f"ts after adjustment: {ts}")
