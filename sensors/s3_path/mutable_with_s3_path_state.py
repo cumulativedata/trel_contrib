@@ -20,7 +20,7 @@ class S3PathSensorMutable(treldev.Sensor):
         super().__init__(config, credentials, *args, **kwargs)
 
         self.mutable_data_path = self.config['mutable_data_path']
-        assert S3Commands.is_valid_s3_path(self.mutable_data_path)
+        # assert S3Commands.is_valid_s3_path(self.mutable_data_path)
         
         self.state_path_to_monitor = self.config['state_path_to_monitor']
         assert S3Commands.is_valid_s3_path(self.state_path_to_monitor)
