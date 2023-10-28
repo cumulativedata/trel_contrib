@@ -51,7 +51,7 @@ class S3PathSensorMutable(treldev.Sensor):
         ts = datetime.datetime.strptime(state[self.state_ts_key], self.instance_ts_format)
         if self.debug:
             self.logger.debug(f"Found timestamp {ts} in {self.state_path_to_monitor}")
-        ts -= datetime.timedelta(
+        ts += datetime.timedelta(seconds=self.offset_seconds)
         ts = datetime.datetime(*ts.timetuple()[:({'H':4,'D':3,'M':5}[self.instance_ts_precision])])
         if self.debug:
             self.logger.debug(f"ts after adjustment: {ts}")
