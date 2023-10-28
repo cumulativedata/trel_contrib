@@ -48,7 +48,11 @@ class S3PathSensorMutable(treldev.Sensor):
             raise Exception(f"Unable to load state from {self.state_path_to_monitor}")
         existing_tss = set([ ds['instance_ts'] for ds in datasets ])
         ts = datetime.datetime.strptime(state[self.state_ts_key], self.instance_ts_format)
+        if self.debug:
+            self.logger.debug(f"Found timestamp {ts} in {self.state_path_to_monitor}")
         ts = datetime.datetime(*ts.timetuple()[:({'H':4,'D':3,'M':5}[self.instance_ts_precision])])
+        if self.debug:
+            self.logger.debug(f"ts after adjustment: {ts}")
         if ts in existing_tss:
             return
         yield str(ts), { 'instance_prefix':self.instance_prefix,
