@@ -54,10 +54,10 @@ class S3PathSensorMutable(treldev.Sensor):
         ts += datetime.timedelta(seconds=self.offset_seconds)
         ts = datetime.datetime(*ts.timetuple()[:({'H':4,'D':3,'M':5}[self.instance_ts_precision])])
         if self.debug:
-            self.logger.debug(f"ts after adjustment: {ts}")
+            self.logger.debug(f"ts after adjustment: {repr(ts)}")
             self.logger.debug(f"Existings tss: {existing_tss}")
             
-        if ts in existing_tss:
+        if str(ts) in existing_tss:
             return
         yield str(ts), { 'instance_prefix':self.instance_prefix,
                          'instance_ts':str(ts),
