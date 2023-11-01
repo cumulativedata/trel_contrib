@@ -127,6 +127,7 @@ class ODBCSensor(treldev.ClockBasedSensor):
         
         destination = DestinationProtocol.get_object_from_uri(uri, self)
         destination.prepare()
+        print(f"Destination prepared", file=sys.stderr)
             
         fetch_rows = self.batch_rows // 20
         sql = ("select * from {table}"
@@ -372,7 +373,9 @@ class BigQueryDestination(DestinationProtocol):
         from google.cloud import bigquery
         import base64
 
+        print("Getting Bigquery client", file=sys.stderr)
         self.client = treldev.gcputils.BigQuery.get_client()
+        print("Got BigQuery client", file=sys.stderr)
         for col in self.sensor.columns:
             bq_type = self.type_mapping[col.data_type]
             print(f"{col.column_name}:{bq_type},", file=sys.stderr,end='')
