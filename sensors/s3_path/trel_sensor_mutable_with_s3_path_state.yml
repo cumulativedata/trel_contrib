@@ -4,7 +4,7 @@ sensor.source_code.main:
   class: github
   branch: main
   path: https://github.com/cumulativedata/trel_contrib.git
-sensor.main_executable: _code/sensors/s3_path/sensor_s3_path_mutable_with_state_monitor.py
+sensor.main_executable: _code/sensors/s3_path/mutable_with_s3_path_state.py
 
 manager_name: main
 credentials.requested_name: default

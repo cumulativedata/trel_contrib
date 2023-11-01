@@ -82,6 +82,7 @@ class Test(unittest.TestCase):
             'state_path_to_monitor':'s3://trel-contrib-unittests/public/s3_path/state',
             'instance_ts_precision':'D',
             'dataset_class':'unittest_class',
+            'offset_seconds': 0,
             'label':'test',
             'repository': 'some-s3-repo',
             }
@@ -94,10 +95,10 @@ class Test(unittest.TestCase):
         self.assertEqual(res[0][1]['instance_ts'],'2023-01-01 00:00:00')
         self.assertEqual(res[0][1]['instance_prefix'], None)
 
-        res = list(s.get_new_datasetspecs([{'instance_ts':datetime.datetime(2023,1,1)}]))
+        res = list(s.get_new_datasetspecs([{'instance_ts':str(datetime.datetime(2023,1,1))}]))
         self.assertEqual(len(res),0)
         
-        res = list(s.get_new_datasetspecs([{'instance_ts':datetime.datetime(2023,1,1)}]))
+        res = list(s.get_new_datasetspecs([{'instance_ts':str(datetime.datetime(2023,1,1))}]))
         self.assertEqual(len(res),0)
         
 if __name__ == '__main__':
