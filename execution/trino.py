@@ -22,6 +22,7 @@ Connects to Trino by wrapping credentials management.'''
         except KeyError:
             raise Exception("Running Trino SQL requires trino credential, which is missing")
         cls.client = TrinoJavaClientWrapper(**credentials)
+        return cls.client
 
 class TrinoJavaClientWrapper(object):
     def __init__(self,  user, password, executable_jar, jks_path=None, jks_password=None):
