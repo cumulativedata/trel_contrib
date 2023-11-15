@@ -182,10 +182,10 @@ if __name__ == '__main__':
     print(''.join(new_sql))
 
     client = Trino.get_client()
-    uri = args['outputs'].values().next()[0]['uri']
+    uri = list(args['outputs'].values())[0][0]['uri']
     trino_uri = TrinoURI(uri)
-    with tempfile.NamedTemporaryFile(delete_on_close=False) as fp:
-        fp.write(''.join(new_sql))
+    with tempfile.NamedTemporaryFile(delete=False) as fp:
+        fp.write(''.join(new_sql).encode('utf-8'))
         fp.close()
         client.execute_sql_script(trino_uri.host, trino_uri.port, trino_uri.catalog, fp.name, cli_args.timeout) 
        
