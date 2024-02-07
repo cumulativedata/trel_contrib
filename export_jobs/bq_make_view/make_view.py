@@ -3,6 +3,7 @@ from treldev.gcputils import BigQueryURI, Storage, BigQuery
 from treldev import get_args, SendSMTPMail
 
 from google.cloud import bigquery
+import google.api_core.exceptions
 from typing import List
 
 from datetime import datetime
@@ -31,7 +32,7 @@ def recreate_view_if_needed(client: bigquery.Client, output_view: str, inputs: l
             if view_ts >= schedule_ts:
                 print(f"No update needed. The view's timestamp {view_ts_str} is up-to-date or newer than the scheduled timestamp.")
                 return
-    except bigquery.NotFound:
+    except google.api_core.exceptions.NotFound:
         # View does not exist, proceed to create
         print("View does not exist. Creating a new one.")
     
