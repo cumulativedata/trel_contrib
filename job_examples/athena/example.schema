@@ -1,0 +1,13 @@
+columns:
+ - name: CustomerID
+   type: int
+ - name: FirstName
+   type: string
+ - name: LastName
+   type: string
+ - name: TotalBilled
+   type: double
+format: parquet
+sodacore_checks: |1
+  - row_count > 0
+  - row_count < 100
