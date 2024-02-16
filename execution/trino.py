@@ -1,4 +1,4 @@
-import treldev
+import treldev, json, subprocess, os
 
 class Trino(treldev.SQLExecutor):
     ''' 
@@ -9,8 +9,8 @@ Connects to Trino by wrapping credentials management.'''
     @classmethod
     def import_modules(cls):
         global connect, TrinoQueryError
-        from trino.dbapi import connect
-        from trino.exceptions import TrinoQueryError
+        # from trino.dbapi import connect
+        # from trino.exceptions import TrinoQueryError
     
     @classmethod
     def get_client(cls):
@@ -22,6 +22,7 @@ Connects to Trino by wrapping credentials management.'''
         except KeyError:
             raise Exception("Running Trino SQL requires trino credential, which is missing")
         cls.client = TrinoJavaClientWrapper(**credentials)
+        return cls.client
 
 class TrinoJavaClientWrapper(object):
     def __init__(self,  user, password, executable_jar, jks_path=None, jks_password=None):
@@ -41,7 +42,7 @@ class TrinoJavaClientWrapper(object):
             cmd.extend(['--keystore-path', self.jks_path,
                         '--keystore-password', self.jks_password])
 
-            
+        print(' '.join(cmd))
         process = subprocess.Popen(cmd, env=dict(os.environ, TRINO_PASSWORD=self.password))
         
         try:

@@ -1,7 +1,9 @@
 import trino
-from trino import TrinoURI
+from trino import TrinoURI,Trino
 import argparse, yaml, unittest, os, subprocess
 from treldev import get_args
+import tempfile
+
 
 """ Accepts an SQL file and information on how to parameterize it.
 
@@ -121,6 +123,7 @@ if __name__ == '__main__':
     parser.add_argument('--input_map', nargs='+')
     parser.add_argument('--output_map', nargs='+')
     parser.add_argument('--sql_file', help='The SQL filename to run')
+    parser.add_argument('--timeout',type = int, help='Seconds for timeout', default= 3600)
     cli_args = parser.parse_args(cli_args_list)
     new_sql = []
 
@@ -177,3 +180,12 @@ if __name__ == '__main__':
             new_sql.append(line)
 
     print(''.join(new_sql))
+
+    client = Trino.get_client()
+    uri = list(args['outputs'].values())[0][0]['uri']
+    trino_uri = TrinoURI(uri)
+    with tempfile.NamedTemporaryFile(delete=False) as fp:
+        fp.write(''.join(new_sql).encode('utf-8'))
+        fp.close()
+        client.execute_sql_script(trino_uri.host, trino_uri.port, trino_uri.catalog, fp.name, cli_args.timeout) 
+       
