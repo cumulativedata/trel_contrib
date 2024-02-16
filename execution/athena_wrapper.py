@@ -27,7 +27,7 @@ if __name__ == '__main__':
     output_dcs = set( v[0]['dataset_class'] for v in chain(args['outputs'].values()) )
     if len(output_dcs) != 1:
         raise Exception(f"There has to be exactly 1 dataet class in the output. Found: {output_dcs}")
-    output_ath = AthenaURI(args['outputs']['output_athena'][0]['uri']).path
+    output_ath = AthenaURI(args['outputs']['output_athena'][0]['uri'])
     s3_output_uri = args['outputs']['output'][0]['uri']
 
     new_sql = []
