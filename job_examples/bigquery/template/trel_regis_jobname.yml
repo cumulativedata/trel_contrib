@@ -1,0 +1,30 @@
+name: # __TODO__
+# job_description:
+
+execution.profile: bigquery
+
+execution.source_code.main:
+  class: github
+  branch: main
+  # TODO provide git repository
+  # path: git@github.com:cumulativedata/trel_contrib.git
+  
+execution.main_executable: # _code/  # TODO provide path
+
+repository_map:
+  # __TODO__
+  - <input dataset_class1>: bq-us
+    <input dataset_class2>: bq-us
+
+execution.output_generator:
+  class: default
+  outputs:
+  - dataset_class: # __TODO__
+
+scheduler:
+  class: single_instance
+  labels: [ prod ]
+  # depends_on: [ <dataset_class>,... ]   # __TODO__
+  instance_ts_precisions: [ D ]
+  cron_constraint: "0 0 * * *"
+  schedule_ts_min: "2024-01-01 00:00:00" # __TODO__
