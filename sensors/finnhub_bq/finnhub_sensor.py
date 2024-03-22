@@ -1,12 +1,3 @@
-'''  Queries Finnhub API. Uploads stock ticks to BigQuery.
-
-Credentials required: 
-- finnhub: A JSON dict containing at least api_key
-
-Packages required:
-- finnhub
-'''
-
 import json, yaml, os, unittest, croniter, time, datetime, tempfile, sys
 import finnhub
 import treldev
@@ -17,7 +8,9 @@ def crawl(ticker, min_ts, max_ts, credentials, logger=None, debug=False):
     finnhub_client = finnhub.Client(api_key=credentials['api_key'])
     if debug:
         logger.debug("Opened finnhub client")
+        logger.debug(f"finnhub_client.stock_candles({ticker}, 1, {min_ts}, {max_ts})")
     res = finnhub_client.stock_candles(ticker, 1, min_ts, max_ts)
+    time.sleep(1)
     if debug:
         logger.debug("Got data")
     if res['s'] == 'no_data':
@@ -45,7 +38,7 @@ class Test(unittest.TestCase):
         import logging
         with open("credentials.yml") as f:
             credentials = yaml.safe_load(f)
-        with open("trel_sensor_finnhub.yml") as f:
+        with open("registrations/trel_sensor_finnhub.yml") as f:
             config = yaml.safe_load(f)
             
         root = logging.getLogger()
@@ -58,7 +51,7 @@ class Test(unittest.TestCase):
         
         now = datetime.datetime.now()
         sensor = FinnhubSensor(config, credentials, root, True)
-        path = os.environ['BIGQUERY_TEMP_PATH']+"_finnhub_"+str(time.time()).replace(".","_")
+        path = "bq://saphireislands/tmp/test_"+str(time.time()).replace(".","_")
         sensor.save_data_to_path(datetime.datetime(2021,8,26,20), path)
         bquri = gcputils.BigQueryURI(path)
         table = bquri.get_table()
@@ -80,10 +73,11 @@ class FinnhubSensor(treldev.Sensor):
         ''' If there is data ready to be inserted, this should return a datasetspec. Else, return None '''
         return self.get_new_datasetspecs_with_cron_and_precision(datasets)
 
-    def save_data_to_path(self, load_info, uri, **kwargs):
+    def save_data_to_path(self, load_info, uri, dataset):
         ''' if the previous call to get_new_datasetspecs returned a (load_info, datasetspec) tuple, then this call should save the data to the provided path, given the corresponding (load_info, path). '''
         ts = load_info['instance_ts']
-        ts_next = croniter.croniter(self.cron_constraint, ts).get_next(datetime.datetime)
+        self.logger.debug(f"cron_constraint {self.cron_constraint}, ts {ts}")
+        ts_next = load_info['period_end']
         if self.debug:
             self.logger.debug(f"ts {ts} ts_next {ts_next}")
             
