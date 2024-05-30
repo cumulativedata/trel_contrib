@@ -34,7 +34,10 @@ class DestinationProtocol(object):
             sensor.logger.error(msg)
             raise Exception(msg) from ex
         
-    def __init__(self, uri, sensor):
+    def __init__(self, uri, sensor, extension = None, original_file_name = False):
+        '''extension is a string that we will append to the file name'''
+        self.original_file_name = original_file_name
+        self.extension = extension
         self.uri = uri
         self.sensor = sensor
     
@@ -71,12 +74,20 @@ class S3Destination(DestinationProtocol):
 
     
     def append_data_inner(self, filename):
-        if self.sensor.compression == 'gz':
+        extension = self.extension
+        original_file_name = self.original_file_name
+        if original_file_name is True:
+            file_uri = self.uri + os.path.basename(filename)
+        elif self.sensor.compression == 'gz':
+            if extension is None:
+                extension = '.gz'
             subprocess.check_call(f"gzip {filename}", shell=True)
-            filename = filename + '.gz'
-            file_uri = self.uri + f"part-{self.batch_num:>05}.gz"
+            filename = filename + extension
+            file_uri = self.uri + f"part-{self.batch_num:>05}{extension}"
         else:
-            file_uri = self.uri + f"part-{self.batch_num:>05}"
+            if extension is None:
+                extension = ''
+            file_uri = self.uri + f"part-{self.batch_num:>05}{extension}"
         self.s3_commands.upload_file(filename, file_uri)
         os.remove(filename)
 

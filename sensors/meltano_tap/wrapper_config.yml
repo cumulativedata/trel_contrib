@@ -1,0 +1,73 @@
+sensor_id: meltano-test-dynamic
+
+sensor.source_code.main:
+  class: github
+  branch: main
+  path: https://github.com/cumulativedata/trel_contrib.git
+sensor.main_executable: _code/sensors/meltano_tap/meltano_wrapper.py
+checked_out_files_to_use:
+  - _code/sensors/destinations
+
+manager_name: main
+credentials.requested_name: default
+
+dataset_class: dropped_file
+instance_prefix: null # it is recommended you specify a value here, even when null.
+instance_ts_precision: D # change based on frequency of drop
+label: master
+repository: s3-us-east2
+
+# See schema management for details. As for now, this is only used as the attribute
+# for the destination dataset and does not influence the schema of the destination.
+# That is decided by querying the source table only.
+schema_version: "1"
+
+sleep_duration: 10 # Sleep for this long after each check
+
+# It will generate a dataset for each timestamp in this set, subject to the precision.
+cron_constraint: "0 0 * * *"
+
+
+# Instead of placing the credentials as shown above, these 5 entries
+# can be stored in a key in credentials management and referenced here
+# This takes precedence over the above section.
+credentials.source_key: tap-git-meltano
+
+
+# How many seconds after the previous period is the next period considered ready?
+# E.g., normally, with an hourly cadence, instance 20220101_04 will be ready to load
+# as of 2022-01-01 05:00:00. With this parameter set to 60, it will be ready only
+# as of 2022-01-01 05:00:30
+delay_seconds: 30
+
+# Specify a string here that you want run instead.
+# The string will be formatted using the following variables:
+# 1. table (with value given above)
+# 2. instance_ts (will correspond to what this query result will be registered as)
+# 3. instance_ts_precision (with value given above)
+
+# Don't insert into the catalog, entries with
+# intance_ts older than this many seconds.
+max_instance_age_seconds: 864000 
+
+debug: [] # to debug the sensor add strings "writes" and "reads" into this list
+
+meltano_tap: # specify extractor(tap) here e.g. <tap-github> , <tap-rest-api-msdk>
+tap_credentials:
+  # you can specify which trel credential should be provided to the meltano tap
+  #syntax trel_credential_key: <meltano config name>
+
+tap_config:
+  #define config which is required for extractor 
+  #e.g. username : type user name here
+
+
+#e.g. if you have extractor name tap-github
+# meltano_tap: tap-github
+# tap_config:
+#      user_usernames: '["user_name"]' # if you have a array or json
+#      repository: name_of_repo
+
+
+meltano_target_format: #csv or json or parquet
+
