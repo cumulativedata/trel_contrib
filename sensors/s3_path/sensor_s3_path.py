@@ -193,7 +193,7 @@ class S3PathSensor(treldev.Sensor):
                instance_ts < self.round_now - datetime.timedelta(seconds=self.max_instance_age_seconds):
                 self.known_contents.add(subfolder)
                 continue
-            if self.min_instance_ts is not None and instance_ts < self.min_instance_ts:
+            if self.min_instance_ts is not None and str(instance_ts) < self.min_instance_ts:
                 self.known_contents.add(subfolder)
                 continue
 
