@@ -13,17 +13,17 @@ execution.main_executable: # TODO path to your file here. E.g. _code/myfolder/my
 
 repository_map:
   # __TODO__
-  - <input dataset_class1>: athena-e2
-    <input dataset_class2>: athena-e2
+  - <input dataset_class1>: dw
+    <input dataset_class2>: dw
 
 execution.output_generator:
   class: default
   outputs:
   - dataset_class: # __TODO__
     name: output
-    repository: s3-us-east2
+    repository: dl
   - name: output_athena
-    repository: athena-e2
+    repository: dw
     link_to_previous: True
 
 scheduler:
