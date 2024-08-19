@@ -51,10 +51,11 @@ delay_seconds: 30
 # 1. table (with value given above)
 # 2. instance_ts (will correspond to what this query result will be registered as)
 # 3. instance_ts_precision (with value given above)
-custom_sql: "select col1, col2 from {table} where col1 >= '"'"'{instance_ts}'"'"'"
+custom_sql: "select col1, col2 from {table} where col1 >= '{instance_ts}'"
 
-# Don'"'"'t insert into the catalog, entries with
+# Don't insert into the catalog, entries with
 # intance_ts older than this many seconds.
 max_instance_age_seconds: 864000 
 
 debug: [ ] # to debug the sensor add strings "writes" and "reads" into this list
+
