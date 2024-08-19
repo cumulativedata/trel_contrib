@@ -1,0 +1,27 @@
+name: # __TODO__
+# job_description: "" # TODO
+
+execution.profile: databricks_notebookjob
+
+execution.source_code.main:
+  class: databricks_notebookjob
+  path: https://____________.cloud.databricks.com#___job_id____
+  branch: master
+
+repository_map:
+  # __TODO__
+  - <input dataset_class1>: dl
+    <input dataset_class2>: dl
+
+execution.output_generator:
+  class: default
+  outputs:
+  - dataset_class: # __TODO__
+
+scheduler:
+  class: single_instance
+  labels: [ prod ]
+  # depends_on: [ <dataset_class>,... ]   # __TODO__
+  instance_ts_precisions: [ D ]
+  cron_constraint: "0 0 * * *"
+  schedule_ts_min: "2024-01-01 00:00:00" # __TODO__
