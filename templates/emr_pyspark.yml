@@ -1,0 +1,40 @@
+name: # __TODO__
+# job_description: "" # TODO
+
+execution.profile: emr_pyspark
+
+execution.source_code.main:
+  class: github
+  branch: main
+  path: # TODO put your repository here. E.g. git@github.com:cumulativedata/trel_contrib.git
+execution.main_executable: # TODO path to your file here. E.g. _code/myfolder/myfile.py
+# execution.checked_out_files_to_use:
+#  - _code/____ #  put additional files needed by the job here
+
+resource.name: emr_spark
+resource.memory_level: normal # 4GB/core OR high (8GB/core) OR low (2GB/core)
+resource.num_cores: 1
+resource.args:
+  region: us-east-2 # TODO update region
+  spot: true 
+
+# resource.static_resource_id: <cluster_id> # reuse existing cluster
+
+
+repository_map:
+  # __TODO__
+  - <input dataset_class1>: dl
+    <input dataset_class2>: dl
+
+execution.output_generator:
+  class: default
+  outputs:
+  - dataset_class: # __TODO__
+
+scheduler:
+  class: single_instance
+  labels: [ prod ]
+  # depends_on: [ <dataset_class>,... ]   # __TODO__
+  instance_ts_precisions: [ D ]
+  cron_constraint: "0 0 * * *"
+  schedule_ts_min: "2024-01-01 00:00:00" # __TODO__

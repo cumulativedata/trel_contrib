@@ -1,0 +1,38 @@
+sensor_id:  # specify
+
+sensor.source_code.main:
+  class: github
+  branch: main
+  path: https://github.com/cumulativedata/trel_contrib.git
+sensor.main_executable: _code/sensors/s3_path/mutable_with_s3_path_state.py
+
+manager_name: main
+credentials.requested_name: default
+
+mutable_data_path:   # This is the path that this sensor will catalog
+# instance_ts_format: "%Y-%m-%d %H:%M:%S"
+
+dataset_class: # specify 
+instance_prefix: null # it is recommended you specify a value here, even when null.
+instance_ts_precision: D # change based on frequency of drop
+label: master
+repository: # specify destination repository
+
+# See schema management for details. As for now, this is only used as the attribute
+# for the destination dataset and does not influence the schema of the destination.
+# That is decided by querying the source table only.
+schema_version: null
+
+sleep_duration: 10 # Sleep for this long after each check
+
+# To compute the instance_ts, the sensor
+# 1. Reads the state file
+# 2. Parses state_ts_key value using instance_ts_format
+# 2. Adds offset_seconds to the state_ts_key value
+# 3. Rounds to instance_ts_precision
+
+state_path_to_monitor:  # the S3 path of the state file
+# state_ts_key: ts # the key containing the last updated ts or instance_ts
+offset_seconds: -10800 #
+
+debug: []
