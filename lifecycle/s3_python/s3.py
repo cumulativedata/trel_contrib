@@ -1,5 +1,6 @@
 import json, time, sys, yaml, boto3, tempfile, os, datetime
 import multiprocessing.pool
+import treldev
 
 def parse_args():
     import argparse
@@ -31,19 +32,21 @@ def do_action(s3_action):
         s3_action['error_message'] = s3_action['action_requested'] + " is not a valid action"
     return s3_action
         
-def main(_args, input_path, output_path):
+def main(_args, input_path, output_path, credentials):
     start_time = time.time()
     pool = multiprocessing.pool.Pool(processes=100)
     fd, filename = tempfile.mkstemp()
     output_folder = tempfile.mkdtemp()
+
+    s3_handler = S3Commands(credentials_name= credentials)
     
-    s3 = boto3.resource('s3')
+    # s3 = boto3.resource('s3')
     _,_,bucket, prefix = input_path.split('/',3)
     _,_,output_bucket, output_prefix = output_path.split('/',3)
     res = []
     i = 0
-    s3_output_bucket = s3.Bucket(output_bucket)
-    s3_bucket = s3.Bucket(bucket)
+    s3_output_bucket = s3_handler.s3r.Bucket(output_bucket)
+    s3_bucket = s3_handler.s3r.Bucket(bucket)
     for s3_object in s3_bucket.objects.filter(Prefix=prefix):
         print("Processing action file w prefix "+ s3_object.key)
         s3_bucket.download_file(s3_object.key,filename)
@@ -94,7 +97,7 @@ def test(temp_s3_path, num_paths=20, num_files=10):
     os.system(cmd)
         
 if __name__ == '__main__':
-    args = parse_args()
+    args = treldev.get_args()
     main(**args.__dict__)
 
 '''
