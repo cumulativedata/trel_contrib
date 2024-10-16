@@ -42,7 +42,7 @@ def main():
     input_path = list(args['inputs'].values())[0][0]['uri']
     output_path = list(args['outputs'].values())[0][0]['uri']
 
-    s3_handler = S3Commands(credentials_name= args['credentials'])
+    s3_handler = S3Commands()
     
     # s3 = boto3.resource('s3')
     _,_,bucket, prefix = input_path.split('/',3)
