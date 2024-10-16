@@ -1,6 +1,6 @@
 import json, time, sys, yaml, boto3, tempfile, os, datetime
 import multiprocessing.pool
-import treldev
+import treldev import get_args, S3Commands
 
 def parse_args():
     import argparse
@@ -33,7 +33,7 @@ def do_action(s3_action):
     return s3_action
         
 def main():
-    args = treldev.get_args()
+    args = get_args()
     start_time = time.time()
     pool = multiprocessing.pool.Pool(processes=100)
     fd, filename = tempfile.mkstemp()
@@ -42,7 +42,7 @@ def main():
     input_path = list(args['inputs'].values())[0][0]['uri']
     output_path = list(args['outputs'].values())[0][0]['uri']
 
-    s3_handler = treldev.S3Commands(credentials_name= args['credentials'])
+    s3_handler = S3Commands(credentials_name= args['credentials'])
     
     # s3 = boto3.resource('s3')
     _,_,bucket, prefix = input_path.split('/',3)
