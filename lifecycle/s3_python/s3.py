@@ -97,7 +97,7 @@ def test(temp_s3_path, num_paths=20, num_files=10):
     os.system(cmd)
         
 if __name__ == '__main__':
-    args = treldev.parse_args()
+    args = parse_args()
     main(**args.__dict__)
 
 '''
