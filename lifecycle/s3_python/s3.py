@@ -97,8 +97,8 @@ def test(temp_s3_path, num_paths=20, num_files=10):
     os.system(cmd)
         
 if __name__ == '__main__':
-    args = treldev.get_args()
-    main(**args)
+    args = treldev.parse_args()
+    main(**args.__dict__)
 
 '''
     # 27 seconds with (300,10) ThreadPool
