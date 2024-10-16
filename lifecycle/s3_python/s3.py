@@ -32,13 +32,17 @@ def do_action(s3_action):
         s3_action['error_message'] = s3_action['action_requested'] + " is not a valid action"
     return s3_action
         
-def main(_args, input_path, output_path, credentials):
+def main():
+    args = treldev.get_args()
     start_time = time.time()
     pool = multiprocessing.pool.Pool(processes=100)
     fd, filename = tempfile.mkstemp()
     output_folder = tempfile.mkdtemp()
 
-    s3_handler = S3Commands(credentials_name= credentials)
+    input_path = list(args['inputs'].values())[0][0]['uri']
+    output_path = list(args['outputs'].values())[0][0]['uri']
+
+    s3_handler = S3Commands(credentials_name= args['credentials'])
     
     # s3 = boto3.resource('s3')
     _,_,bucket, prefix = input_path.split('/',3)
@@ -97,8 +101,7 @@ def test(temp_s3_path, num_paths=20, num_files=10):
     os.system(cmd)
         
 if __name__ == '__main__':
-    args = parse_args()
-    main(**args.__dict__)
+    main()
 
 '''
     # 27 seconds with (300,10) ThreadPool
