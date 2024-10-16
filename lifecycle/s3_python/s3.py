@@ -1,6 +1,6 @@
 import json, time, sys, yaml, boto3, tempfile, os, datetime
 import multiprocessing.pool
-import treldev import get_args, S3Commands
+from treldev import get_args, S3Commands
 
 def parse_args():
     import argparse
