@@ -11,8 +11,8 @@ def parse_args():
     args, _ = parser.parse_known_args()
     return args
 
-def do_action(s3_action):
-    s3 = boto3.resource('s3')
+def do_action(s3_action, s3_handler):
+    s3 = s3_handler.s3r
     # fill in before_state, after_state, action_completed_ts (if SUCCESS) , error_message (if FAILED)
     if s3_action['action_requested'] == 'delete':
         _,_,bucket, prefix = s3_action['uri'].split('/',3)
@@ -60,10 +60,10 @@ def main():
                 subset.append( json.loads(line) )
                 if len(subset) == 10000:
                     print("Asking pool to process a subset of length {}".format(len(subset)))
-                    res += pool.map(do_action, subset)
+                    res += pool.map(lambda s3_action: do_action(s3_action, s3_handler), subset)
                     subset.clear()
         print("Asking pool to process a subset of length {}".format(len(subset)))
-        res += pool.map(do_action, subset)
+        res += pool.map(lambda s3_action: do_action(s3_action, s3_handler), subset)
         output_filename = 'part-{:05d}'.format(i)
         full_output_filename = os.path.join(output_folder, output_filename)
         with open(full_output_filename,'w') as f:
