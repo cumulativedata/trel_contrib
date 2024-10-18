@@ -11,8 +11,8 @@ def parse_args():
     args, _ = parser.parse_known_args()
     return args
 
-def do_action(s3_action, s3_handler):
-    s3_handler = S3Commands(credentials= args['credentials'])
+def do_action(s3_action, credentials):
+    s3_handler = S3Commands(credentials= credentials)
     # fill in before_state, after_state, action_completed_ts (if SUCCESS) , error_message (if FAILED)
     if s3_action['action_requested'] == 'delete':
         _,_,bucket, prefix = s3_action['uri'].split('/',3)
