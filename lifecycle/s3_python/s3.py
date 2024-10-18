@@ -12,11 +12,11 @@ def parse_args():
     return args
 
 def do_action(s3_action, s3_handler):
-    s3 = s3_handler.s3r
+    s3_handler = S3Commands(credentials= args['credentials'])
     # fill in before_state, after_state, action_completed_ts (if SUCCESS) , error_message (if FAILED)
     if s3_action['action_requested'] == 'delete':
         _,_,bucket, prefix = s3_action['uri'].split('/',3)
-        s3_bucket = s3.Bucket(bucket)
+        s3_bucket = s3_handler.s3r.Bucket(bucket)
         empty = True
         for s3_object in s3_bucket.objects.filter(Prefix=prefix):
             print("Deleting ",s3_object.key)
@@ -33,8 +33,9 @@ def do_action(s3_action, s3_handler):
     return s3_action
 
 
-def process_action(s3_action, s3_handler):
-    return do_action(s3_action, s3_handler)
+def process_action(s3_action, credentials):
+    return do_action(s3_action, credentials)
+
 
 def main():
     args = get_args()
@@ -64,11 +65,10 @@ def main():
                 subset.append( json.loads(line) )
                 if len(subset) == 10000:
                     print("Asking pool to process a subset of length {}".format(len(subset)))
-                    res += pool.starmap(process_action, [(action, s3_handler) for action in subset])
+                    res += pool.starmap(process_action, [(action, args['credentials']) for action in subset])
                     subset.clear()
         print("Asking pool to process a subset of length {}".format(len(subset)))
-        res += pool.starmap(process_action, [(action, s3_handler) for action in subset])
-
+        res += pool.starmap(process_action, [(action, args['credentials']) for action in subset])
         output_filename = 'part-{:05d}'.format(i)
         full_output_filename = os.path.join(output_folder, output_filename)
         with open(full_output_filename,'w') as f:
