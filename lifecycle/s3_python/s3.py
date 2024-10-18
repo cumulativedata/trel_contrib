@@ -31,7 +31,11 @@ def do_action(s3_action, s3_handler):
         s3_action['after_state'] = []
         s3_action['error_message'] = s3_action['action_requested'] + " is not a valid action"
     return s3_action
-        
+
+
+def process_action(s3_action, s3_handler):
+    return do_action(s3_action, s3_handler)
+
 def main():
     args = get_args()
     start_time = time.time()
@@ -60,10 +64,11 @@ def main():
                 subset.append( json.loads(line) )
                 if len(subset) == 10000:
                     print("Asking pool to process a subset of length {}".format(len(subset)))
-                    res += pool.map(lambda s3_action: do_action(s3_action, s3_handler), subset)
+                    res += pool.starmap(process_action, [(action, s3_handler) for action in subset])
                     subset.clear()
         print("Asking pool to process a subset of length {}".format(len(subset)))
-        res += pool.map(lambda s3_action: do_action(s3_action, s3_handler), subset)
+        res += pool.starmap(process_action, [(action, s3_handler) for action in subset])
+
         output_filename = 'part-{:05d}'.format(i)
         full_output_filename = os.path.join(output_folder, output_filename)
         with open(full_output_filename,'w') as f:
