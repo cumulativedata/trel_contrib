@@ -4,6 +4,8 @@ from os import listdir
 from os.path import isfile, join, isdir
 
 
+path_of_meltano = "/opt/trel_venv/bin/meltano"
+
 class MeltanoWrapper(treldev.ClockBasedSensor):
 
     def __init__(self, config, credentials, *args, **kwargs):
@@ -25,9 +27,9 @@ class MeltanoWrapper(treldev.ClockBasedSensor):
         try:
             self.current_directory = os.getcwd()
             self.logger.debug(f"Current working directory: {self.current_directory}")
-            subprocess.check_output(f"~/platform_venv/bin/meltano init test-meltalo", shell=True)
+            subprocess.check_output(f"{path_of_meltano} init test-meltalo", shell=True)
             self.logger.debug("meltano project created successfully")
-            result = subprocess.check_output(f"~/platform_venv/bin/meltano add extractor {self.config['meltano_tap']}", cwd=f"{self.current_directory}/test-meltalo", shell=True)
+            result = subprocess.check_output(f"{path_of_meltano} add extractor {self.config['meltano_tap']}", cwd=f"{self.current_directory}/test-meltalo", shell=True)
             self.logger.debug(f"Extractor {self.config['meltano_tap']} added successfully")
         except Exception as e:
             raise
@@ -38,15 +40,15 @@ class MeltanoWrapper(treldev.ClockBasedSensor):
                 tap_cred_value = json.loads(self.credentials[i])
                 cred_val = tap_creds[self.tap_creds[i]]
                 setattr(self, self.tap_creds[i], tap_cred_value[self.tap_creds[i]])
-                subprocess.check_output(f"~/platform_venv/bin/meltano config {self.config['meltano_tap']} set {self.tap_creds[i]} \'{tap_cred_value}\'", cwd=f"{self.current_directory}/test-meltalo", shell=True)
+                subprocess.check_output(f"{path_of_meltano} config {self.config['meltano_tap']} set {self.tap_creds[i]} \'{tap_cred_value}\'", cwd=f"{self.current_directory}/test-meltalo", shell=True)
                 self.logger.debug(f"{self.tap_creds[i]} set successcully")
 
 
         for k in self.tap_config:
             setattr(self, k, self.tap_config[k])
-            # self.logger.debug(f"~/platform_venv/bin/meltano config {self.config['meltano_tap']} set user_usernames \'{self.tap_config[k]}\'")
-            # self.logger.debug(f'~/platform_venv/bin/meltano config tap-github set user_usernames \'["{self.user_usernames}"]\'')
-            result = subprocess.check_output(f"~/platform_venv/bin/meltano config {self.config['meltano_tap']} set {k} \'{self.tap_config[k]}\'", cwd=f"{self.current_directory}/test-meltalo", shell=True)
+            # self.logger.debug(f"{path_of_meltano} config {self.config['meltano_tap']} set user_usernames \'{self.tap_config[k]}\'")
+            # self.logger.debug(f'{path_of_meltano} config tap-github set user_usernames \'["{self.user_usernames}"]\'')
+            result = subprocess.check_output(f"{path_of_meltano} config {self.config['meltano_tap']} set {k} \'{self.tap_config[k]}\'", cwd=f"{self.current_directory}/test-meltalo", shell=True)
             self.logger.debug(f"{k} \'{self.tap_config[k]}\' set successcully")
             
 
@@ -83,14 +85,14 @@ class MeltanoWrapper(treldev.ClockBasedSensor):
         if meltano_target_format not in ["csv", "parquet", "json"]:
             raise "please provide valid target from csv, parquet or json"
         else:
-            subprocess.check_output(f"~/platform_venv/bin/meltano add loader {_target['loader']}", cwd=f"{self.current_directory}/test-meltalo", shell=True)
+            subprocess.check_output(f"{path_of_meltano} add loader {_target['loader']}", cwd=f"{self.current_directory}/test-meltalo", shell=True)
             self.logger.debug("loader added successcully")
             for key,val in _target['config'].items():
-                subprocess.check_output(f"~/platform_venv/bin/meltano config {_target['loader']} set {key} {val}", cwd=f"{self.current_directory}/test-meltalo", shell=True)
+                subprocess.check_output(f"{path_of_meltano} config {_target['loader']} set {key} {val}", cwd=f"{self.current_directory}/test-meltalo", shell=True)
                 self.logger.debug(f"{key} set successcully")
 
         
-        subprocess.check_output(f"~/platform_venv/bin/meltano el {self.config['meltano_tap']} {_target['loader']}", cwd=f"{self.current_directory}/test-meltalo", shell=True)
+        subprocess.check_output(f"{path_of_meltano} el {self.config['meltano_tap']} {_target['loader']}", cwd=f"{self.current_directory}/test-meltalo", shell=True)
         self.logger.debug("elt completed successcully")
         
        
