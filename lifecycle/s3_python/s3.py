@@ -18,18 +18,14 @@ def do_action(s3_action, credentials):
         _,_,bucket, prefix = s3_action['uri'].split('/',3)
         s3_bucket = s3_handler.s3r.Bucket(bucket)
         empty = True
-        try:
-            for s3_object in s3_bucket.objects.filter(Prefix=prefix):
-                print("Deleting ",s3_object.key)
-                s3_object.delete()
-                s3_object.wait_until_not_exists()
-                empty = False
-            s3_action['action_completed_ts'] = str(datetime.datetime.utcnow())
-            s3_action['before_state'] = [ ('empty' if empty else 'not_empty') ]
-            s3_action['after_state'] = ['empty']
-        except Exception as e:
-            print(f"Error accessing bucket {bucket}: {str(e)}")
-            s3_action['error_message'] = str(e)
+        for s3_object in s3_bucket.objects.filter(Prefix=prefix):
+            print("Deleting ",s3_object.key)
+            s3_object.delete()
+            s3_object.wait_until_not_exists()
+            empty = False
+        s3_action['action_completed_ts'] = str(datetime.datetime.utcnow())
+        s3_action['before_state'] = [ ('empty' if empty else 'not_empty') ]
+        s3_action['after_state'] = ['empty']
     else:
         s3_action['before_state'] = []
         s3_action['after_state'] = []
