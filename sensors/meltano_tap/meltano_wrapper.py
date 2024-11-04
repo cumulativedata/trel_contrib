@@ -34,23 +34,24 @@ class MeltanoWrapper(treldev.ClockBasedSensor):
         except Exception as e:
             raise
 
-        # if 'tap_credentials' in self.config:
-        #     self.tap_creds = self.config["tap_credentials"]
-        #     for i in self.tap_creds:
-        #         tap_cred_value = json.loads(self.credentials[i])
-        #         cred_val = tap_creds[self.tap_creds[i]]
-        #         setattr(self, self.tap_creds[i], tap_cred_value[self.tap_creds[i]])
-        #         subprocess.check_output(f"{path_of_meltano} config {self.config['meltano_tap']} set {self.tap_creds[i]} \'{tap_cred_value}\'", cwd=f"{self.current_directory}/test-meltalo", shell=True)
-        #         self.logger.debug(f"{self.tap_creds[i]} set successcully")
-
         if 'tap_credentials' in self.config:
             self.tap_creds = self.config["tap_credentials"]
-            for creds,value in self.tap_creds:
+            for i in self.tap_creds:
+                self.logger.debug(self.credentials)
                 tap_cred_value = json.loads(self.credentials[i])
                 cred_val = tap_creds[self.tap_creds[i]]
-                setattr(self, creds, value)
-                subprocess.check_output(f"{path_of_meltano} config {self.config['meltano_tap']} set {self.creds} \'{value}\'", cwd=f"{self.current_directory}/test-meltalo", shell=True)
+                setattr(self, self.tap_creds[i], tap_cred_value[self.tap_creds[i]])
+                subprocess.check_output(f"{path_of_meltano} config {self.config['meltano_tap']} set {self.tap_creds[i]} \'{tap_cred_value}\'", cwd=f"{self.current_directory}/test-meltalo", shell=True)
                 self.logger.debug(f"{self.tap_creds[i]} set successcully")
+
+        # if 'tap_credentials' in self.config:
+        #     self.tap_creds = self.config["tap_credentials"]
+        #     for creds,value in self.tap_creds:
+        #         tap_cred_value = json.loads(self.credentials[i])
+        #         cred_val = tap_creds[self.tap_creds[i]]
+        #         setattr(self, creds, value)
+        #         subprocess.check_output(f"{path_of_meltano} config {self.config['meltano_tap']} set {self.creds} \'{value}\'", cwd=f"{self.current_directory}/test-meltalo", shell=True)
+        #         self.logger.debug(f"{self.tap_creds[i]} set successcully")
 
 
         for k in self.tap_config:
