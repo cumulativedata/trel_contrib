@@ -59,7 +59,7 @@ class MeltanoWrapper(treldev.ClockBasedSensor):
                                         f"{path_of_meltano} config {self.config['meltano_tap']} set {values[identifier]} '{tap_cred_value[identifier]}'",
                                         cwd=f"{self.current_directory}/test-meltalo", shell=True
                                     )
-                                    self.logger.debug(f"{cred_name} set successfully")
+                                    self.logger.debug(f"{values[identifier]} set successfully to {tap_cred_value[identifier]}")
 
                         else:
                             # If no valid value was found
