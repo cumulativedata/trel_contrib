@@ -37,8 +37,8 @@ class MeltanoWrapper(treldev.ClockBasedSensor):
         if 'tap_credentials' in self.config:
             self.tap_creds = self.config["tap_credentials"]
             for i in self.tap_creds:
-                self.logger.debug(self.credentials)
                 tap_cred_value = json.loads(self.credentials[i])
+                self.logger.debug(tap_cred_value)
                 cred_val = tap_creds[self.tap_creds[i]]
                 setattr(self, self.tap_creds[i], tap_cred_value[self.tap_creds[i]])
                 subprocess.check_output(f"{path_of_meltano} config {self.config['meltano_tap']} set {self.tap_creds[i]} \'{tap_cred_value}\'", cwd=f"{self.current_directory}/test-meltalo", shell=True)
