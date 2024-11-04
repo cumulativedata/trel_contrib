@@ -50,32 +50,20 @@ class MeltanoWrapper(treldev.ClockBasedSensor):
 
                         if isinstance(tap_cred_value, dict):
                             # Check if values is a dictionary for dynamic key selection
-                            if isinstance(values, dict):
-                                # Access the key or skey dynamically
-                                key_value = tap_cred_value.get(values.get('key', ''))
-                                skey_value = tap_cred_value.get(values.get('skey', ''))
+                            for identifier in values:
+                                # Access each identifier dynamically
+                                value = tap_cred_value.get(identifier, None)
+                                if value is not None:
+                                    # Execute the subprocess command
+                                    subprocess.check_output(
+                                        f"{path_of_meltano} config {self.config['meltano_tap']} set {values[identifier]} '{tap_cred_value[identifier]}'",
+                                        cwd=f"{self.current_directory}/test-meltalo", shell=True
+                                    )
+                                    self.logger.debug(f"{cred_name} set successfully")
 
-                                # Choose which value to set based on your logic
-                                if key_value is not None:
-                                    setattr(self, cred_name, key_value)
-                                    selected_value = key_value
-                                elif skey_value is not None:
-                                    setattr(self, cred_name, skey_value)
-                                    selected_value = skey_value
-                                else:
-                                    self.logger.warning(f"No valid value found for {cred_name}")
-
-                            # If values is just a string, set it directly
-                            else:
-                                setattr(self, cred_name, tap_cred_value)
-                                selected_value = tap_cred_value
-
-                            # Execute the subprocess command
-                            subprocess.check_output(
-                                f"{path_of_meltano} config {self.config['meltano_tap']} set {cred_name} '{selected_value}'",
-                                cwd=f"{self.current_directory}/test-meltalo", shell=True
-                            )
-                            self.logger.debug(f"{cred_name} set successfully")
+                        else:
+                            # If no valid value was found
+                            self.logger.warning(f"No valid value found for {cred_name}")
 
                     except json.JSONDecodeError:
                         self.logger.error(f"Error decoding JSON for {cred_name}: {credential_value}")
