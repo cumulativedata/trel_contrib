@@ -34,7 +34,7 @@ def delete_athena_table(athena_action: Dict[str, Any], credentials: Dict[str, An
     athena_uri_str = athena_action.get('uri')
     action_requested = athena_action.get('action_requested', '').lower()
     
-    if action_requested != 'delete_table':
+    if action_requested != 'delete':
         athena_action['before_state'] = []
         athena_action['after_state'] = []
         athena_action['error_message'] = f"{action_requested} is not a valid action."
