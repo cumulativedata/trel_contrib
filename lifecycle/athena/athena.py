@@ -9,7 +9,7 @@ import datetime
 from multiprocessing import Pool, cpu_count
 from typing import Dict, Any, List, Tuple
 from treldev import get_args, S3Commands
-from athena_utils import AthenaURI  # Assuming your Athena utility classes are in athena_utils.py
+from treldev.awsutils import AthenaURI  # Assuming your Athena utility classes are in athena_utils.py
 import logging
 
 # Configure logging
