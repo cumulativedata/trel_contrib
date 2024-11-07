@@ -53,7 +53,7 @@ def delete_athena_table(athena_action: Dict[str, Any], credentials: Dict[str, An
     try:
         logger.info(f"Attempting to delete Athena table: {athena_uri.table} in database: {athena_uri.database}")
         exec_id = athena_uri.run_sql_command(
-            sql=f"DROP TABLE IF EXISTS {athena_uri.path}",
+            sql=f"DROP TABLE IF EXISTS {athena_uri.table}",
             database=athena_uri.database,
             catalog=athena_uri.catalog,
             workgroup='primary',  # You can modify this based on your configuration
