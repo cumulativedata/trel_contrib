@@ -16,6 +16,7 @@ def do_action(s3_action, credentials):
     # fill in before_state, after_state, action_completed_ts (if SUCCESS) , error_message (if FAILED)
     if s3_action['action_requested'] == 'delete':
         _,_,bucket, prefix = s3_action['uri'].split('/',3)
+        print(f'bucket is {bucket} and prefix is {prefix}')
         s3_bucket = s3_handler.s3r.Bucket(bucket)
         empty = True
         for s3_object in s3_bucket.objects.filter(Prefix=prefix):
