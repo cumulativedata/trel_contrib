@@ -9,7 +9,7 @@ import datetime
 from multiprocessing import Pool, cpu_count
 from typing import Dict, Any, List, Tuple
 from treldev import get_args, S3Commands
-from treldev.awsutils import AthenaURI  # Assuming your Athena utility classes are in athena_utils.py
+from treldev.awsutils import AthenaURI, Athena  # Assuming your Athena utility classes are in athena_utils.py
 import logging
 
 # Configure logging
@@ -57,7 +57,7 @@ def delete_athena_table(athena_action: Dict[str, Any], credentials: Dict[str, An
             database=athena_uri.database,
             catalog=athena_uri.catalog,
             workgroup='primary',  # You can modify this based on your configuration
-            client=AthenaURI.get_client(athena_uri.region),
+            client=Athena.get_client(athena_uri.region),
             result_configuration={},
             quiet=True,
             is_query=True
